@@ -46,7 +46,7 @@ let activeSection = 'all'; // 'all' или индекс 0, 1, 2...
     const topic = topicList[topicIndex];
     renderChrome(topic);
 
-    fetch(`data/${subject.id}/p${topic.p}.json`)
+    fetch(`data/${subject.id}/p${topic.p}.json`, { cache: 'no-store' })
         .then(res => {
             if (!res.ok) throw new Error('файл данных не найден');
             return res.json();
