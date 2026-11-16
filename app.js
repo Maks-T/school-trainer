@@ -164,6 +164,10 @@ function renderSpeaker() {
     const fullContainer = document.getElementById('speaker-full-container');
     const keyContainer = document.getElementById('speaker-keywords-container');
 
+    // Запоминаем положение прокрутки вкладок, чтобы оно не сбрасывалось при перерисовке
+    const prevTabs = fullContainer.querySelector('.section-tabs');
+    const prevScroll = prevTabs ? prevTabs.scrollLeft : 0;
+
     fullContainer.innerHTML = '';
     keyContainer.innerHTML = '';
 
@@ -178,6 +182,7 @@ function renderSpeaker() {
     });
     navBar.innerHTML = tabsHTML;
     fullContainer.appendChild(navBar);
+    enableTabScroll(navBar, prevScroll);
 
     // Контейнер под текст разделов
     const contentBox = document.createElement('div');
@@ -220,6 +225,37 @@ function renderSpeaker() {
     document.querySelectorAll('.secret-word').forEach(el => {
         el.addEventListener('click', () => el.classList.toggle('hidden'));
     });
+}
+
+// Горизонтальная прокрутка вкладок разделов: колесо мыши, перетаскивание, автопрокрутка к активной вкладке
+function enableTabScroll(bar, prevScroll) {
+    bar.scrollLeft = prevScroll || 0;
+    const active = bar.querySelector('.sec-tab-btn.active');
+    if (active) {
+        const l = active.offsetLeft - bar.offsetLeft;
+        if (l < bar.scrollLeft) bar.scrollLeft = l - 8;
+        else if (l + active.offsetWidth > bar.scrollLeft + bar.clientWidth) bar.scrollLeft = l + active.offsetWidth - bar.clientWidth + 8;
+    }
+    // Колесо мыши (вертикальное) -> горизонтальная прокрутка
+    bar.addEventListener('wheel', e => {
+        if (bar.scrollWidth <= bar.clientWidth) return;
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            bar.scrollLeft += e.deltaY;
+            e.preventDefault();
+        }
+    }, { passive: false });
+    // Перетаскивание мышью
+    let down = false, moved = false, startX = 0, startLeft = 0;
+    bar.addEventListener('mousedown', e => { down = true; moved = false; startX = e.pageX; startLeft = bar.scrollLeft; });
+    window.addEventListener('mousemove', e => {
+        if (!down) return;
+        const dx = e.pageX - startX;
+        if (Math.abs(dx) > 5) { moved = true; bar.classList.add('dragging'); }
+        if (moved) bar.scrollLeft = startLeft - dx;
+    });
+    window.addEventListener('mouseup', () => { down = false; bar.classList.remove('dragging'); });
+    // После перетаскивания не считаем это кликом по вкладке
+    bar.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
 }
 
 function selectSection(idx) {

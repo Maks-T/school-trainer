@@ -190,10 +190,16 @@ p.subtitle {
     border-bottom: 1px solid var(--border);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
     flex-wrap: nowrap;
+    cursor: grab;
+    overscroll-behavior-x: contain;
 }
-.section-tabs::-webkit-scrollbar { display: none; }
+.section-tabs.dragging { cursor: grabbing; user-select: none; }
+.section-tabs::-webkit-scrollbar { height: 6px; }
+.section-tabs::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.section-tabs::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 .sec-tab-btn {
     padding: 5px 12px;
     border-radius: 8px;
