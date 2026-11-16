@@ -55,10 +55,12 @@
                     <div class="flashcard-front">
                         <span class="fc-tag" id="fc-category">Тема</span>
                         <div class="fc-q" id="fc-front-text">Вопрос</div>
+                        <div class="fc-img" id="fc-front-img"></div>
                         <div class="fc-hint">💡 Нажмите, чтобы перевернуть</div>
                     </div>
                     <div class="flashcard-back">
                         <div class="fc-a" id="fc-back-text">Ответ</div>
+                        <div class="fc-img" id="fc-back-img"></div>
                     </div>
                 </div>
             </div>
@@ -106,6 +108,12 @@
         <a href="#" id="pager-prev" class="pager-btn" style="visibility:hidden;">⬅ <span></span></a>
         <a href="#" id="pager-next" class="pager-btn" style="visibility:hidden;"><span></span> ➡</a>
     </nav>
+</div>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" aria-label="Закрыть">✕</button>
+    <img id="lightbox-img" alt="">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
 </div>
 
 <script src="catalog.js"></script>

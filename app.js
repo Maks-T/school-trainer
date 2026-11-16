@@ -198,7 +198,7 @@ function renderSpeaker() {
             navArrows = `<div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px dashed var(--border);">${prevBtn}${nextBtn}</div>`;
         }
 
-        box.innerHTML = `<div class="section-title">${sec.title}</div><p>${parsedText}</p>${navArrows}`;
+        box.innerHTML = `<div class="section-title">${sec.title}</div><p>${parsedText}</p>${figuresHTML(sec.images)}${navArrows}`;
         contentBox.appendChild(box);
 
         // Опорная цепочка
@@ -254,6 +254,14 @@ function updateCardUI() {
     document.getElementById('fc-category').innerText = fc.cat || "Термин";
     document.getElementById('fc-front-text').innerText = fc.q;
     document.getElementById('fc-back-text').innerText = fc.a;
+    // Картинка карточки: по умолчанию на обороте (ответ), side: "q" — на лицевой стороне
+    const frontImg = document.getElementById('fc-front-img');
+    const backImg = document.getElementById('fc-back-img');
+    frontImg.innerHTML = '';
+    backImg.innerHTML = '';
+    const hasImg = !!(fc.image && fc.image.src);
+    if (hasImg) (fc.image.side === 'q' ? frontImg : backImg).innerHTML = figureHTML(fc.image, true);
+    document.querySelector('.flashcard').classList.toggle('has-img', hasImg);
     document.getElementById('fc-index').innerText = currentCard + 1;
     document.getElementById('fc-total').innerText = data.flashcards.length;
     document.querySelector('.flashcard').classList.remove('flipped');
@@ -364,3 +372,40 @@ function switchTab(tabId) {
     const content = document.getElementById('tab-' + tabId);
     if (content) content.classList.add('active');
 }
+
+
+// ---------- Картинки из учебника ----------
+
+function imgUrl(src) {
+    return /^(https?:|data:|\/)/.test(src) ? src : `data/${subject.id}/${src}`;
+}
+
+function escAttr(t) {
+    return String(t || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function figureHTML(img, compact) {
+    if (!img || !img.src) return '';
+    const url = imgUrl(img.src);
+    const cap = img.caption ? `<figcaption>${img.caption}</figcaption>` : '';
+    const w = img.width ? ` style="max-width:${parseInt(img.width, 10)}px"` : '';
+    return `<figure class="fig${compact ? ' fig-compact' : ''}"${w}>
+        <img src="${url}" alt="${escAttr(img.caption || 'Иллюстрация')}" loading="lazy"
+             onclick="event.stopPropagation(); openLightbox('${url}', '${escAttr(img.caption).replace(/'/g, '&#39;')}')">
+        ${cap}</figure>`;
+}
+
+function figuresHTML(list) {
+    if (!list || !list.length) return '';
+    return `<div class="fig-row">${list.map(i => figureHTML(i)).join('')}</div>`;
+}
+
+function openLightbox(url, caption) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox-caption').textContent = caption || '';
+    document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
