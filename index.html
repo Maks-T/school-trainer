@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьный тренажёр — 7 класс</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="home">
+<div class="container">
+    <header style="margin-bottom: 24px;">
+        <h1>🏫 Школьный тренажёр: 7 класс</h1>
+        <p class="subtitle">Все предметы в одной платформе — выберите предмет, чтобы начать подготовку к уроку и доске</p>
+        <p class="subtitle" id="subject-summary" style="margin-top:6px; font-size:0.78rem;"></p>
+    </header>
+
+    <div id="subject-grid" class="subject-grid"></div>
+
+    <div id="load-error" class="stub-card" style="display:none; text-align:center;">
+        <div class="stub-icon">⚠️</div>
+        <div class="stub-title">Не удалось загрузить список предметов</div>
+        <div class="stub-desc">Запустите проект через локальный сервер (например, Live Server в VS Code) и обновите страницу.</div>
+    </div>
+</div>
+
+<script src="catalog.js"></script>
+</body>
+</html>

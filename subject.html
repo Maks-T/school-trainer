@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Предмет — Школьный тренажёр</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="subject">
+<div class="container">
+    <nav class="breadcrumbs" id="breadcrumbs">
+        <a href="index.html">🏠 Главная</a>
+        <span class="crumb-sep">›</span>
+        <span class="crumb-current">Загрузка...</span>
+    </nav>
+
+    <header class="subject-header" id="subject-header">
+        <div class="subject-icon-lg" id="subject-icon">📘</div>
+        <div class="subject-heading">
+            <h1 id="subject-title">Загрузка...</h1>
+            <p class="subtitle" id="subject-desc"></p>
+        </div>
+        <span class="badge" id="subject-badge"></span>
+    </header>
+
+    <div id="subject-content"></div>
+
+    <div id="load-error" class="stub-card" style="display:none; text-align:center;">
+        <div class="stub-icon">⚠️</div>
+        <div class="stub-title" id="error-title">Предмет не найден</div>
+        <div class="stub-desc">Проверьте ссылку или вернитесь <a href="index.html">на главную</a>.</div>
+    </div>
+</div>
+
+<script src="catalog.js"></script>
+</body>
+</html>

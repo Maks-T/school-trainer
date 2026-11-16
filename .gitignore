@@ -1,0 +1,33 @@
+
+# Зависимости и сборка
+node_modules/
+dist/
+build/
+.cache/
+
+# Логи
+*.log
+npm-debug.log*
+
+# Переменные окружения
+.env
+.env.*
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы и IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Временные файлы
+*.tmp
+*.bak
+~$*
+
+# Исходные PDF учебников (в платформу не встраиваются)
+*.pdf
