@@ -26,11 +26,13 @@
         <p class="subtitle" id="page-subtitle">Пожалуйста, подождите</p>
     </header>
 
+    <div class="tools-bar" id="tools-bar" style="display:none;"></div>
+
     <div class="tabs" id="trainer-tabs">
-        <button class="tab-btn active" data-tab="speaker" onclick="switchTab('speaker')">🗣️ Суфлёр</button>
-        <button class="tab-btn" data-tab="flashcards" onclick="switchTab('flashcards')">🃏 Карточки</button>
-        <button class="tab-btn" data-tab="timeline" onclick="switchTab('timeline')">⏳ Хронограф</button>
-        <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')">🎯 Экспресс-тест</button>
+        <button class="tab-btn active" data-tab="speaker" onclick="switchTab('speaker')" data-label="speaker">🗣️ Суфлёр</button>
+        <button class="tab-btn" data-tab="flashcards" onclick="switchTab('flashcards')" data-label="flashcards">🃏 Карточки</button>
+        <button class="tab-btn" data-tab="timeline" onclick="switchTab('timeline')" data-label="timeline">⏳ Хронограф</button>
+        <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')" data-label="quiz">🎯 Экспресс-тест</button>
     </div>
 
     <!-- 1. ТРЕНАЖЁР-СУФЛЁР -->
@@ -76,11 +78,11 @@
     <div id="tab-timeline" class="tab-content">
         <div class="card">
             <div class="mode-selector">
-                <span class="mode-label">Проверка:</span>
-                <button class="mode-btn active" onclick="setTimelineMode('all', this)">👁️ Показать всё</button>
-                <button class="mode-btn" onclick="setTimelineMode('hide-dates', this)">📅 Скрыть даты</button>
-                <button class="mode-btn" onclick="setTimelineMode('hide-events', this)">🔍 Скрыть события</button>
-                <button class="mode-btn" onclick="setTimelineMode('hide-both', this)">🧠 Скрыть всё</button>
+                <span class="mode-label" data-label="timelineMode">Проверка:</span>
+                <button class="mode-btn active" onclick="setTimelineMode('all', this)" data-label="tlShowAll">👁️ Показать всё</button>
+                <button class="mode-btn" onclick="setTimelineMode('hide-dates', this)" data-label="tlHideLeft">📅 Скрыть даты</button>
+                <button class="mode-btn" onclick="setTimelineMode('hide-events', this)" data-label="tlHideRight">🔍 Скрыть события</button>
+                <button class="mode-btn" onclick="setTimelineMode('hide-both', this)" data-label="tlHideBoth">🧠 Скрыть всё</button>
             </div>
             <div class="timeline" id="timeline-container"></div>
         </div>
@@ -116,7 +118,15 @@
     <div id="lightbox-caption" class="lightbox-caption"></div>
 </div>
 
+<div id="tool-modal" class="tool-modal" onclick="if(event.target===this)closeTool()">
+    <div class="tool-dialog">
+        <div class="tool-header"><span id="tool-title"></span><button class="tool-close" onclick="closeTool()" aria-label="Закрыть">✕</button></div>
+        <div class="tool-content" id="tool-body"></div>
+    </div>
+</div>
+
 <script src="catalog.js"></script>
+<script src="tools.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

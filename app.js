@@ -122,6 +122,8 @@ function initApp() {
     document.title = `${subject.icon} ${data.title}`;
     document.getElementById('page-title').innerText = data.title;
     document.getElementById('page-subtitle').innerText = data.subtitle || '';
+    applyLabels();
+    if (typeof initTools === 'function') initTools();
 
     // Вкладки доступны только при наличии данных
     const availability = {
@@ -409,3 +411,15 @@ function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+
+// ---------- Свои названия кнопок (labels) ----------
+// Приоритет: labels параграфа (data.labels) → labels предмета (subjects.json) → значения по умолчанию из trainer.html.
+// Ключи: speaker, flashcards, timeline, quiz, timelineMode, tlShowAll, tlHideLeft, tlHideRight, tlHideBoth.
+function applyLabels() {
+    const labels = Object.assign({}, subject.labels || {}, data.labels || {});
+    document.querySelectorAll('[data-label]').forEach(el => {
+        const text = labels[el.dataset.label];
+        if (text) el.textContent = text;
+    });
+}

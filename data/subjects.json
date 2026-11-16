@@ -5,6 +5,8 @@
   "subjects": [
     {
       "id": "physics",
+      "tools": [{"id": "si", "icon": "📏", "title": "Единицы и приставки СИ", "type": "tables", "data": "tools/si.json"}],
+      "labels": {"timeline": "🔬 Опыты и примеры", "tlHideLeft": "📅 Скрыть опыты", "tlHideRight": "🔍 Скрыть описания"},
       "title": "Физика",
       "icon": "🔬",
       "color": "#059669",
@@ -82,6 +84,8 @@
     },
     {
       "id": "chemistry",
+      "tools": [{"id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json"}, {"id": "mrcalc", "icon": "🧮", "title": "Калькулятор Mr", "type": "mr-calc", "data": "tools/periodic.json"}],
+      "labels": {"timeline": "🧪 Формулы и расчёты", "tlHideLeft": "📅 Скрыть формулы", "tlHideRight": "🔍 Скрыть расчёты"},
       "title": "Химия",
       "icon": "⚗️",
       "color": "#ea580c",
@@ -112,6 +116,7 @@
     },
     {
       "id": "history_bel",
+      "labels": {"timeline": "⏳ Хронология"},
       "title": "История Беларуси",
       "icon": "🏛️",
       "color": "#a16207",
