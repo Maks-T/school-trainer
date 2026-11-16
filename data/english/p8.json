@@ -1,0 +1,208 @@
+{
+  "id": "8",
+  "title": "Lesson 8. Many questions",
+  "subtitle": "Размеры, материалы и вопросы о товаре",
+  "sections": [
+    {
+      "title": "1. Sizes and materials",
+      "text": "Clothes sizes from the smallest to the largest: {XS}, {S}, {M}, {L}, {XL}, {XXL}. Materials: {plastic}, {glass}, {metal}, {wood}, {rubber} and {cotton}. Windows are made of {glass}; tyres are made of {rubber}; a T-shirt can be made of {cotton}; the skateboard in the conversation is made of {wood}. If you don't know what {size} you need, you can ask a shop-assistant or {try} the clothes {on}.",
+      "chain": [
+        "XS S M L XL XXL",
+        "plastic, glass, metal",
+        "wood, rubber, cotton",
+        "made of + material"
+      ]
+    },
+    {
+      "title": "2. Questions about a product",
+      "text": "Where {is it made}? What {is it made of}? How {long} is it? Is it long {enough} for him? What {size} are these shoes? Where {are they made}? How {much} are they? Can I {try them on}? Questions with Wh-words have {falling} intonation.",
+      "chain": [
+        "Where is it made?",
+        "What is it made of?",
+        "How long is it?",
+        "What size…? How much…?"
+      ]
+    },
+    {
+      "title": "3. In the shop",
+      "text": "Customer: What size are these shoes? Assistant: They are {8 and a half}. Customer: I'm afraid they are {too big}. Can I try them {on}? Later: Oh, they are just the {right size}! Where are they made? — They are made in {Korea}. How much are they? — They used to be {49,99}, but they are on {sale}: it's {50%} off, which makes less than {25 pounds}. Customer: I think I'll {take} them.",
+      "chain": [
+        "size 8½, too big",
+        "try on — right size",
+        "made in Korea",
+        "on sale: 50% off"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "cotton",
+      "a": "хлопок"
+    },
+    {
+      "cat": "Слово",
+      "q": "glass",
+      "a": "стекло"
+    },
+    {
+      "cat": "Слово",
+      "q": "metal",
+      "a": "металл"
+    },
+    {
+      "cat": "Слово",
+      "q": "plastic",
+      "a": "пластик"
+    },
+    {
+      "cat": "Слово",
+      "q": "rubber",
+      "a": "резина"
+    },
+    {
+      "cat": "Слово",
+      "q": "wood",
+      "a": "дерево (материал)"
+    },
+    {
+      "cat": "Слово",
+      "q": "size",
+      "a": "размер"
+    },
+    {
+      "cat": "Размеры",
+      "q": "XS",
+      "a": "extra small — очень маленький"
+    },
+    {
+      "cat": "Размеры",
+      "q": "XL",
+      "a": "extra large — очень большой"
+    },
+    {
+      "cat": "Размеры",
+      "q": "Расставьте от меньшего к большему: M, XL, S, XS, L, XXL.",
+      "a": "XS, S, M, L, XL, XXL."
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Как спросить, где сделан товар?",
+      "a": "Where is it made?"
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Как спросить, из чего сделан товар?",
+      "a": "What is it made of?"
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Как спросить размер обуви?",
+      "a": "What size are these shoes?"
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Как спросить цену?",
+      "a": "How much is it? / How much are they?"
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Как спросить длину?",
+      "a": "How long is it?"
+    },
+    {
+      "cat": "Интонация",
+      "q": "Какая интонация у Wh-вопросов?",
+      "a": "Падающая (falling)."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "Where … made?",
+      "title": "Страна производства",
+      "text": "Where is it made? — It's made in Germany. Where are they made? — In Korea."
+    },
+    {
+      "date": "What … made of?",
+      "title": "Материал",
+      "text": "What is it made of? — It's made of wood."
+    },
+    {
+      "date": "How long … ?",
+      "title": "Размер, длина",
+      "text": "How long is it? Is it long enough for him?"
+    },
+    {
+      "date": "How much … ?",
+      "title": "Цена",
+      "text": "How much are they? — 50% off, less than 25 pounds."
+    },
+    {
+      "date": "What size … ?",
+      "title": "Размер",
+      "text": "What size are these shoes? — They are 8 and a half."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "Which material is a tyre made of?",
+      "opts": [
+        "rubber",
+        "glass",
+        "cotton",
+        "metal"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Which is the smallest size?",
+      "opts": [
+        "S",
+        "XS",
+        "M",
+        "XXL"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "How do you ask about the material?",
+      "opts": [
+        "Where is it made?",
+        "How much is it?",
+        "What is it made of?",
+        "How long is it?"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "A T-shirt is often made of…",
+      "opts": [
+        "metal",
+        "glass",
+        "wood",
+        "cotton"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "Intonation of Wh-questions is…",
+      "opts": [
+        "falling",
+        "rising",
+        "flat",
+        "wavy"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "«It's on sale, 50% off» means…",
+      "opts": [
+        "it costs twice as much",
+        "it costs half the price",
+        "it is free",
+        "it is sold out"
+      ],
+      "correct": 1
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "id": "2",
+  "title": "Lesson 2. Nation of shoppers",
+  "subtitle": "Покупки в Великобритании и Беларуси: High Street, Harrods, ГУМ, Комаровка",
+  "labels": {
+    "timeline": "📍 Места и факты",
+    "tlHideLeft": "📅 Скрыть названия",
+    "tlHideRight": "🔍 Скрыть описания"
+  },
+  "sections": [
+    {
+      "title": "1. Shopping in the UK",
+      "text": "Napoleon once described the British as «a nation of {shopkeepers}». Today they could be called «a nation of {shoppers}», because shopping is the most popular national {leisure activity}. The main shopping street in most towns is called the {High Street}. {Oxford Street} in London is the world's biggest High Street, with more than {100} stores of world-famous {brands}. Most large towns have a {department store} that sells {household goods} and clothing. In London, {Harrods} is the largest department store in {Europe}; it has about {300} departments, including the Christmas department and the {food halls}. For {unique} souvenirs of high {quality}, head to {Covent Garden}, which has street markets, live music and trendy cafes.",
+      "chain": [
+        "Britain — a nation of shoppers",
+        "High Street — main shopping street",
+        "Oxford Street — 100+ brands",
+        "Harrods — 300 departments, food halls",
+        "Covent Garden — souvenirs"
+      ]
+    },
+    {
+      "title": "2. Shopping in Belarus",
+      "text": "Belarus has shops of all kinds: large {malls}, {department stores}, {markets} and {fairs}. In Minsk, popular places are the department stores {GUM} and {TsUM} and the shopping centres {Nemiga}, {Stolitsa}, {Dana Mall} and {Arena City}. For more traditional shopping, go to {Komarovsky Market}, one of the oldest food markets in the city. Tourists often buy Belarusian brands known for high {quality}: clothes, shoes, cosmetics, home textiles, sweets and drinks. Well-known chocolate brands are {Kommunarka} and {Spartak}. Traditional souvenirs are {dolls} in national costumes, hand-painted {wooden toys} and spoons, {tablecloths} and napkins.",
+      "chain": [
+        "GUM, TsUM — department stores",
+        "Nemiga, Stolitsa, Dana Mall, Arena City",
+        "Komarovsky Market — oldest food market",
+        "Kommunarka, Spartak — chocolate",
+        "Souvenirs: dolls, wooden toys, tablecloths"
+      ]
+    },
+    {
+      "title": "3. Words from the text",
+      "text": "A {High Street} is a main shopping street. A {souvenir} is something you buy to remember a holiday. {Goods} are things you can buy. {Brands} are trade names. {Food halls} are areas in a mall where fast food is sold around a common eating area. Something {of high quality} is very well made. {Unique} means one of a kind. To {head to} a place means to go in its direction.",
+      "chain": [
+        "High Street = shopping street",
+        "souvenir = memory of a holiday",
+        "goods = things to buy",
+        "brand = trade name",
+        "unique = one of a kind"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "a brand",
+      "a": "торговая марка, бренд"
+    },
+    {
+      "cat": "Слово",
+      "q": "goods",
+      "a": "товары"
+    },
+    {
+      "cat": "Слово",
+      "q": "quality",
+      "a": "качество"
+    },
+    {
+      "cat": "Слово",
+      "q": "a souvenir",
+      "a": "сувенир"
+    },
+    {
+      "cat": "Слово",
+      "q": "the High Street",
+      "a": "главная торговая улица"
+    },
+    {
+      "cat": "Слово",
+      "q": "food halls",
+      "a": "фуд-корты, отделы с едой"
+    },
+    {
+      "cat": "Слово",
+      "q": "unique",
+      "a": "уникальный, единственный в своём роде"
+    },
+    {
+      "cat": "Слово",
+      "q": "of high quality",
+      "a": "высокого качества"
+    },
+    {
+      "cat": "Слово",
+      "q": "to head to",
+      "a": "направляться в"
+    },
+    {
+      "cat": "Слово",
+      "q": "household goods",
+      "a": "товары для дома"
+    },
+    {
+      "cat": "Факт",
+      "q": "Как Наполеон назвал британцев?",
+      "a": "«A nation of shopkeepers» — нация лавочников."
+    },
+    {
+      "cat": "Факт",
+      "q": "Как сегодня можно назвать британцев и почему?",
+      "a": "«A nation of shoppers»: шопинг — самое популярное национальное развлечение."
+    },
+    {
+      "cat": "Факт",
+      "q": "Какая улица в Лондоне — самая большая High Street в мире?",
+      "a": "Oxford Street: более 100 магазинов всемирно известных брендов."
+    },
+    {
+      "cat": "Факт",
+      "q": "Что такое Harrods?",
+      "a": "Самый большой универмаг Европы, около 300 отделов (в том числе рождественский и food halls)."
+    },
+    {
+      "cat": "Факт",
+      "q": "Куда ехать за уникальными сувенирами в Лондоне?",
+      "a": "В Covent Garden: уличные рынки, живая музыка, модные кафе и сувенирные магазины."
+    },
+    {
+      "cat": "Беларусь",
+      "q": "Назовите универмаги и торговые центры Минска.",
+      "a": "GUM, TsUM; Nemiga, Stolitsa, Dana Mall, Arena City."
+    },
+    {
+      "cat": "Беларусь",
+      "q": "Какой рынок Минска самый популярный?",
+      "a": "Komarovsky Market — один из старейших продуктовых рынков города."
+    },
+    {
+      "cat": "Беларусь",
+      "q": "Какие шоколадные бренды названы в тексте?",
+      "a": "Kommunarka и Spartak."
+    },
+    {
+      "cat": "Беларусь",
+      "q": "Назовите традиционные белорусские сувениры.",
+      "a": "Куклы в национальных костюмах, расписные деревянные игрушки и ложки, скатерти и салфетки."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "Oxford Street",
+      "title": "London, UK",
+      "text": "The world's biggest High Street: more than 100 stores of world-famous brands."
+    },
+    {
+      "date": "Harrods",
+      "title": "London, UK",
+      "text": "The largest department store in Europe; about 300 departments, the Christmas department, food halls."
+    },
+    {
+      "date": "Covent Garden",
+      "title": "London, UK",
+      "text": "Street markets, live music, trendy cafes, great souvenir shops."
+    },
+    {
+      "date": "GUM, TsUM",
+      "title": "Minsk",
+      "text": "Famous department stores; they sell everything from socks to dictionaries."
+    },
+    {
+      "date": "Komarovsky Market",
+      "title": "Minsk",
+      "text": "One of the city's oldest food markets; the most popular traditional market."
+    },
+    {
+      "date": "Kommunarka, Spartak",
+      "title": "Belarus",
+      "text": "Two well-known brands making chocolates."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "The main shopping street in a British town is called…",
+      "opts": [
+        "the High Street",
+        "the Main Road",
+        "the Market Square",
+        "the Oxford Way"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "What is the largest department store in Europe?",
+      "opts": [
+        "Hamleys",
+        "GUM",
+        "Harrods",
+        "Covent Garden"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "Which word means 'something you buy to remember a holiday'?",
+      "opts": [
+        "a brand",
+        "a souvenir",
+        "goods",
+        "quality"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "Which is a well-known Belarusian chocolate brand?",
+      "opts": [
+        "Harrods",
+        "Nemiga",
+        "Komarovsky",
+        "Kommunarka"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "'Unique' means…",
+      "opts": [
+        "one of a kind",
+        "very old",
+        "very cheap",
+        "very big"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Komarovsky Market is…",
+      "opts": [
+        "a department store",
+        "a shopping mall",
+        "one of Minsk's oldest food markets",
+        "a toy shop"
+      ],
+      "correct": 2
+    }
+  ]
+}

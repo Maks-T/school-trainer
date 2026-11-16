@@ -1,0 +1,204 @@
+{
+  "id": "4",
+  "title": "Lesson 4. Grandma's presents",
+  "subtitle": "too и enough: слишком и достаточно",
+  "sections": [
+    {
+      "title": "1. Too and enough",
+      "text": "{too} + adjective means {more than necessary} (negative): It's {too} beautiful! This dress is a bit {too} short. {not} + adjective + {enough} means {less than necessary} (negative): I'm {not} thin {enough} to wear this dress. Adjective + {enough} means {as much as necessary} (positive): You are old {enough} to wear a tie. {Too} goes {before} the adjective; {enough} goes {after} the adjective. To change a sentence with too: My jeans are {too short} → They are {not long enough}.",
+      "chain": [
+        "too + adj = больше, чем нужно",
+        "not + adj + enough = меньше, чем нужно",
+        "adj + enough = достаточно",
+        "too — перед, enough — после прилагательного"
+      ]
+    },
+    {
+      "title": "2. Granny's presents",
+      "text": "Granny has bought clothes for Nick and Rosie, but they are not happy. Nick says: I think I have {enough} shirts, Gran. Besides, I am {too} messy. Rosie says: I'm not {thin enough} to wear this lovely dress. Granny says: You are {old enough} to wear a tie. At the end she says: I think I'm {too old-fashioned} to buy clothes for you.",
+      "chain": [
+        "Nick: enough shirts, too messy",
+        "Rosie: not thin enough for the dress",
+        "Granny: old enough for a tie",
+        "Granny: too old-fashioned"
+      ]
+    },
+    {
+      "title": "3. The shopping list",
+      "text": "The list has {vitamins}, {a jar of} marmalade, a {board game}, {a packet of} cereal, a new red {hat}, some {party clothes}, ten {postcards}, some {bread} and {a pair of} shoes. You can buy vitamins at the {chemist's}, marmalade, cereal and bread at a {grocery}, a board game at a {toy shop}, postcards at a {newsagent's} and shoes at a {shoe shop}.",
+      "chain": [
+        "vitamins — chemist's",
+        "marmalade, cereal, bread — grocery",
+        "board game — toy shop",
+        "postcards — newsagent's",
+        "shoes — shoe shop"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Грамматика",
+      "q": "Что значит too + adj.?",
+      "a": "Больше, чем нужно (негативно): It's too expensive."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Что значит not + adj. + enough?",
+      "a": "Меньше, чем нужно (негативно): I'm not thin enough."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Что значит adj. + enough?",
+      "a": "Достаточно (позитивно): You are old enough to wear a tie."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Где стоит too: до или после прилагательного?",
+      "a": "Перед прилагательным: too big."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Где стоит enough: до или после прилагательного?",
+      "a": "После прилагательного: big enough."
+    },
+    {
+      "cat": "Перефразируйте",
+      "q": "My jeans are too short.",
+      "a": "They are not long enough."
+    },
+    {
+      "cat": "Перефразируйте",
+      "q": "These trousers are too baggy.",
+      "a": "They are not tight enough."
+    },
+    {
+      "cat": "Перефразируйте",
+      "q": "This beauty salon is too expensive.",
+      "a": "It is not cheap enough."
+    },
+    {
+      "cat": "Перефразируйте",
+      "q": "The belt is too short.",
+      "a": "It is not long enough."
+    },
+    {
+      "cat": "Перефразируйте",
+      "q": "The shop-assistant is too slow.",
+      "a": "He / she is not fast enough."
+    },
+    {
+      "cat": "Слово",
+      "q": "a jar of marmalade",
+      "a": "банка мармелада / джема"
+    },
+    {
+      "cat": "Слово",
+      "q": "a packet of cereal",
+      "a": "пачка хлопьев"
+    },
+    {
+      "cat": "Слово",
+      "q": "a board game",
+      "a": "настольная игра"
+    },
+    {
+      "cat": "Слово",
+      "q": "a pair of shoes",
+      "a": "пара обуви"
+    },
+    {
+      "cat": "Слово",
+      "q": "vitamins",
+      "a": "витамины"
+    },
+    {
+      "cat": "Слово",
+      "q": "too generous",
+      "a": "слишком щедрый"
+    }
+  ],
+  "timeline": [
+    {
+      "date": "too + adjective",
+      "title": "Слишком (негатив)",
+      "text": "It's too beautiful! This dress is a bit too short for a school party."
+    },
+    {
+      "date": "not + adjective + enough",
+      "title": "Недостаточно (негатив)",
+      "text": "I'm not thin enough to wear this lovely dress. I'm not good enough to wear it."
+    },
+    {
+      "date": "adjective + enough",
+      "title": "Достаточно (позитив)",
+      "text": "You are old enough to wear a tie."
+    },
+    {
+      "date": "too → not … enough",
+      "title": "Перефразирование",
+      "text": "My jeans are too short. → They are not long enough."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "'It's too expensive' means the price is…",
+      "opts": [
+        "more than necessary",
+        "less than necessary",
+        "exactly right",
+        "very low"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Choose the correct sentence.",
+      "opts": [
+        "He is enough old to drive.",
+        "He is too old enough to drive.",
+        "He is old enough to drive.",
+        "He is old too to drive."
+      ],
+      "correct": 2
+    },
+    {
+      "q": "My jeans are too short. =",
+      "opts": [
+        "They are long enough.",
+        "They are not long enough.",
+        "They are not short enough.",
+        "They are too long."
+      ],
+      "correct": 1
+    },
+    {
+      "q": "This tie is too dark. =",
+      "opts": [
+        "It is not dark enough.",
+        "It is light too.",
+        "It is enough light.",
+        "It is not light enough."
+      ],
+      "correct": 3
+    },
+    {
+      "q": "Where do you buy vitamins?",
+      "opts": [
+        "at a chemist's",
+        "at a bakery",
+        "at a pet shop",
+        "at a newsagent's"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Which word goes with «a pair of»?",
+      "opts": [
+        "bread",
+        "shoes",
+        "cereal",
+        "vitamins"
+      ],
+      "correct": 1
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "id": "1",
+  "title": "Lesson 1. Shops and stores",
+  "subtitle": "Типы магазинов и Present Perfect с for и since",
+  "sections": [
+    {
+      "title": "1. Types of shops",
+      "text": "A {bakery} sells bread and cakes. A {chemist's} sells medicines. A {newsagent's} sells newspapers and magazines. A {pet shop} sells animals and food for them. A {sweet shop} sells sweets, and a {book shop} sells books. A {grocery} (grocery store) sells everyday food. A {supermarket} is a big shop where you take a trolley and choose the goods yourself. A {department store} has many departments, for example clothes and household goods. A {shopping centre} (a {mall}) has many different shops that share one building. Looking at shop windows without buying is called {window-shopping}.",
+      "chain": [
+        "bakery — bread",
+        "chemist's — medicines",
+        "newsagent's — newspapers",
+        "pet shop — animals",
+        "department store — many departments",
+        "mall — many shops, one building"
+      ]
+    },
+    {
+      "title": "2. For or since?",
+      "text": "We use the {Present Perfect} with {for} and {since} to say how long a situation has lasted. Form: {have / has} + {Past Participle}. We use {for} with a {period of time}: for {two weeks}, for {three hours}, for {ages}. We use {since} with a {starting point}: since {Christmas}, since {2009}, since {yesterday}, since {11 a.m.}. Examples: I {haven't been} to the shopping mall for {months}. My sister {has had} her guinea pig since {Easter}. I {haven't been} to the pet shop since {September}.",
+      "chain": [
+        "Present Perfect = have / has + V3",
+        "for + период (two weeks, ages)",
+        "since + начало (2009, Christmas)",
+        "Диаграмма A — since, B — for"
+      ]
+    },
+    {
+      "title": "3. Rosie's interview",
+      "text": "Do you enjoy shopping? — I {enjoy} / don't {mind} / {dislike} it. What shops have you been to? — I've {been to} the bakery and the supermarket. How long is it since you went there? — I {haven't been} there for ages. What did you buy when you went there last time? — I {bought} some bread. What shops are there in your neighbourhood? — There {are} a grocery and a chemist's. What shop did you use to go to? — I {used to} go to a small corner shop. What is your favourite shop? — My {favourite} shop is the book shop.",
+      "chain": [
+        "Do you enjoy…? I enjoy / don't mind / dislike",
+        "What shops have you been to? I've been to…",
+        "How long since…? I haven't been there for / since…",
+        "I bought… / There are… / I used to… / My favourite…"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "a bakery",
+      "a": "пекарня, булочная"
+    },
+    {
+      "cat": "Слово",
+      "q": "a chemist's",
+      "a": "аптека"
+    },
+    {
+      "cat": "Слово",
+      "q": "a department store",
+      "a": "универмаг"
+    },
+    {
+      "cat": "Слово",
+      "q": "for ages",
+      "a": "целую вечность, очень давно"
+    },
+    {
+      "cat": "Слово",
+      "q": "a grocery",
+      "a": "продуктовый магазин"
+    },
+    {
+      "cat": "Слово",
+      "q": "a mall",
+      "a": "торговый центр"
+    },
+    {
+      "cat": "Слово",
+      "q": "a newsagent's",
+      "a": "газетный киоск"
+    },
+    {
+      "cat": "Слово",
+      "q": "a store",
+      "a": "магазин"
+    },
+    {
+      "cat": "Слово",
+      "q": "window-shopping",
+      "a": "рассматривание витрин"
+    },
+    {
+      "cat": "Слово",
+      "q": "a pet shop",
+      "a": "зоомагазин"
+    },
+    {
+      "cat": "Слово",
+      "q": "a sweet shop",
+      "a": "магазин сладостей"
+    },
+    {
+      "cat": "Слово",
+      "q": "a shopping centre",
+      "a": "торговый центр"
+    },
+    {
+      "cat": "Слово",
+      "q": "a supermarket",
+      "a": "супермаркет"
+    },
+    {
+      "cat": "Слово",
+      "q": "a book shop",
+      "a": "книжный магазин"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Как образуется Present Perfect?",
+      "a": "have / has + Past Participle (V3): I have been, she has bought."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем for?",
+      "a": "С периодом времени: for two weeks, for three hours, for ages, for half a year."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем since?",
+      "a": "С точкой начала: since Christmas, since 2009, since yesterday, since 11 a.m."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "for или since: five minutes?",
+      "a": "for five minutes (период)."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "for или since: my birthday?",
+      "a": "since my birthday (момент начала)."
+    },
+    {
+      "cat": "Пример",
+      "q": "Закончите: My sister (have) her guinea pig … Easter.",
+      "a": "has had … since Easter."
+    },
+    {
+      "cat": "Пример",
+      "q": "Закончите: I (know) my best friend … three years.",
+      "a": "have known … for three years."
+    },
+    {
+      "cat": "Пример",
+      "q": "Закончите: I (not be) to the hairdresser's … June.",
+      "a": "haven't been … since June."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "have / has + V3",
+      "title": "Present Perfect — форма",
+      "text": "I have been to the bakery. She has bought bread."
+    },
+    {
+      "date": "for + период",
+      "title": "for",
+      "text": "for two weeks, for ages, for five minutes, for half a year, for three hours, for more than 10 days"
+    },
+    {
+      "date": "since + момент",
+      "title": "since",
+      "text": "since September, since Christmas, since 2009, since yesterday, since 11 a.m., since my birthday, since last year"
+    },
+    {
+      "date": "haven't / hasn't + V3",
+      "title": "Отрицание",
+      "text": "I haven't been to the pet shop since September. I haven't bought anything at the newsagent's for ages."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "Where can you buy medicines?",
+      "opts": [
+        "a bakery",
+        "a chemist's",
+        "a newsagent's",
+        "a pet shop"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "Which place has many different shops in one building?",
+      "opts": [
+        "a shopping centre",
+        "a bakery",
+        "a newsagent's",
+        "a grocery"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "I haven't been to the cinema … two months.",
+      "opts": [
+        "since",
+        "from",
+        "for",
+        "during"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "She has lived here … 2015.",
+      "opts": [
+        "for",
+        "from",
+        "at",
+        "since"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "Choose the correct form: My sister … her guinea pig since Easter.",
+      "opts": [
+        "have had",
+        "has had",
+        "had",
+        "is having"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "What does 'window-shopping' mean?",
+      "opts": [
+        "buying a window",
+        "shopping online",
+        "looking at shop windows without buying",
+        "selling windows"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "I haven't bought anything at the newsagent's … ages.",
+      "opts": [
+        "for",
+        "since",
+        "at",
+        "in"
+      ],
+      "correct": 0
+    }
+  ]
+}

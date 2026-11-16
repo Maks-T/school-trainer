@@ -1,0 +1,234 @@
+{
+  "id": "3",
+  "title": "Lesson 3. You are what you wear",
+  "subtitle": "Одежда, описания и артикли с названиями одежды",
+  "sections": [
+    {
+      "title": "1. Clothes vocabulary",
+      "text": "{Baggy} clothes are loose; {tight} clothes fit closely. {Trendy} clothes are fashionable; {old-fashioned} clothes are not. {Smart} clothes are for special occasions; {everyday} clothes are for ordinary days. A {checked} shirt has squares; a {striped} shirt has lines. A {belt} goes round your waist; a {tie} goes under a shirt collar. {Trainers} are sports shoes. There is no singular form of {clothes}: we say {a piece of clothing} or {an item of clothing}.",
+      "chain": [
+        "baggy ↔ tight",
+        "trendy ↔ old-fashioned",
+        "smart ↔ everyday",
+        "checked = клетчатый, striped = полосатый",
+        "clothes — только множественное число"
+      ]
+    },
+    {
+      "title": "2. Articles with clothes",
+      "text": "With singular countable nouns we use {a / an}: {a} T-shirt, {a} belt, {a} tie. With {plural} nouns we use {no article}: jeans, trousers, trainers, socks. When the object is known to the reader or listener, we use {the}: {The} trainers she is wearing are very trendy. We do not use a / an with {plural} and {uncountable} nouns. Some clothes words are always plural: {trousers}, {jeans}, {shorts}, {pyjamas}. To count them we say {a pair of} trousers.",
+      "chain": [
+        "a / an + singular countable",
+        "plural → no article",
+        "the — known object",
+        "a pair of trousers / jeans / trainers"
+      ]
+    },
+    {
+      "title": "3. Describing clothes",
+      "text": "He is wearing {a pair of} trainers, a {striped} T-shirt and {baggy} shorts. I like his {belt} because it looks {smart}. I don't like these jeans because they are {too tight}. Today I'm wearing {trousers} and a {checked} shirt. She always buys {trendy} brands. Since the beginning of the school year I've lost two T-shirts, {a tie} and a pair of trainers.",
+      "chain": [
+        "a pair of trainers",
+        "striped T-shirt, baggy shorts",
+        "trousers and a checked shirt",
+        "trendy brands"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "baggy",
+      "a": "мешковатый, свободный"
+    },
+    {
+      "cat": "Слово",
+      "q": "a belt",
+      "a": "ремень, пояс"
+    },
+    {
+      "cat": "Слово",
+      "q": "checked",
+      "a": "клетчатый"
+    },
+    {
+      "cat": "Слово",
+      "q": "old-fashioned",
+      "a": "старомодный"
+    },
+    {
+      "cat": "Слово",
+      "q": "smart",
+      "a": "нарядный, элегантный"
+    },
+    {
+      "cat": "Слово",
+      "q": "striped",
+      "a": "полосатый"
+    },
+    {
+      "cat": "Слово",
+      "q": "a tie",
+      "a": "галстук"
+    },
+    {
+      "cat": "Слово",
+      "q": "tight",
+      "a": "облегающий, тесный"
+    },
+    {
+      "cat": "Слово",
+      "q": "trainers",
+      "a": "кроссовки"
+    },
+    {
+      "cat": "Слово",
+      "q": "trendy",
+      "a": "модный"
+    },
+    {
+      "cat": "Слово",
+      "q": "clothes",
+      "a": "одежда (только мн. число)"
+    },
+    {
+      "cat": "Противоположности",
+      "q": "trendy — ?",
+      "a": "old-fashioned"
+    },
+    {
+      "cat": "Противоположности",
+      "q": "everyday — ?",
+      "a": "smart"
+    },
+    {
+      "cat": "Противоположности",
+      "q": "baggy — ?",
+      "a": "tight"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Какой артикль перед singular countable?",
+      "a": "a / an: a belt, an item of clothing."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Нужен ли артикль a / an с jeans, trousers?",
+      "a": "Нет: это множественное число. Говорим a pair of jeans."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем the?",
+      "a": "Когда предмет известен слушателю: The trainers she is wearing are trendy."
+    },
+    {
+      "cat": "Пример",
+      "q": "Добавьте артикли: I'd like to buy … new belt.",
+      "a": "a new belt"
+    },
+    {
+      "cat": "Пример",
+      "q": "Добавьте артикли: I don't really like … striped socks I got from my grandma.",
+      "a": "the striped socks"
+    },
+    {
+      "cat": "Пример",
+      "q": "Добавьте артикли: I've lost … two T-shirts, … tie and … pair of trainers.",
+      "a": "— two T-shirts, a tie and a pair of trainers."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "a / an + singular",
+      "title": "Неопределённый артикль",
+      "text": "a T-shirt, a belt, a tie, an item of clothing"
+    },
+    {
+      "date": "— (без артикля)",
+      "title": "Plural и uncountable",
+      "text": "jeans, trousers, trainers, socks, some weight"
+    },
+    {
+      "date": "the + известный предмет",
+      "title": "Определённый артикль",
+      "text": "The jumper I was wearing yesterday looks great on me."
+    },
+    {
+      "date": "a pair of + plural",
+      "title": "Парные предметы",
+      "text": "a pair of trainers, a pair of jeans, a pair of shoes"
+    }
+  ],
+  "quiz": [
+    {
+      "q": "Which word means the opposite of 'trendy'?",
+      "opts": [
+        "tight",
+        "striped",
+        "old-fashioned",
+        "smart"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "The opposite of 'baggy' is…",
+      "opts": [
+        "tight",
+        "checked",
+        "smart",
+        "trendy"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "I'd like to buy … new belt.",
+      "opts": [
+        "an",
+        "a",
+        "the",
+        "—"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "I can't wear … tight jeans any more.",
+      "opts": [
+        "a",
+        "an",
+        "the",
+        "— (no article)"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "A shirt with squares is…",
+      "opts": [
+        "checked",
+        "striped",
+        "baggy",
+        "smart"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Which noun has no singular form?",
+      "opts": [
+        "belt",
+        "clothes",
+        "tie",
+        "shirt"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "… trainers she is wearing are very trendy.",
+      "opts": [
+        "The",
+        "A",
+        "An",
+        "—"
+      ],
+      "correct": 0
+    }
+  ]
+}

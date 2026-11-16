@@ -1,0 +1,219 @@
+{
+  "id": "7",
+  "title": "Lesson 7. Shopping habits",
+  "subtitle": "Существительные только в ед. или только во мн. числе; интервью с моделью",
+  "sections": [
+    {
+      "title": "1. Nouns: only singular or only plural",
+      "text": "Some nouns are used only in the {plural}: {trousers}, {jeans}, {shorts}, {clothes}, {scissors}, {glasses}. They take a plural verb: My old trousers {are} a little tight. To count them we say {a pair of}. Some nouns are {uncountable} and singular: {news}, {money}, {mathematics}, {time}, {tea}. They take a singular verb: The news {is} good today! Money {doesn't} grow on trees. Time {is} money.",
+      "chain": [
+        "trousers, jeans, shorts, scissors — plural",
+        "news, money, mathematics — singular",
+        "a pair of trousers",
+        "The news is…, My trousers are…"
+      ]
+    },
+    {
+      "title": "2. Kade Massey's interview",
+      "text": "Kade Massey is one of the most promising British {models}; he is {15}. He has been working as a model {since} he was 12, so for {more than 3 years}. He usually shops in {London}. He bought designer jeans in {Milan}. His favourite buy of the year is a {striped} brown {jacket}. He never goes anywhere without his {sunglasses} and swimming shorts. For Christmas he has bought two pairs of {gloves} and a silk {scarf} for his mum, and a pair of trainers for his younger {brother}.",
+      "chain": [
+        "Kade — British model, 15",
+        "model since 12 (for 3+ years)",
+        "shops in London, jeans from Milan",
+        "favourite buy — striped jacket",
+        "presents: gloves, scarf, trainers"
+      ]
+    },
+    {
+      "title": "3. Useful phrases",
+      "text": "I almost always buy something in the end, but I'm not a {shopaholic}. If something {catches my eye} and is good enough, I just have to buy it. I {used to} buy cheaper clothes. I prefer to buy clothes {myself}. And I don't mind it {at all}. How {much} do you spend on clothes? What is the {best} thing in your wardrobe?",
+      "chain": [
+        "shopaholic = любитель шопинга",
+        "catch my eye = бросаться в глаза",
+        "used to + V",
+        "I don't mind it at all"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "a model",
+      "a": "модель, манекенщик"
+    },
+    {
+      "cat": "Слово",
+      "q": "money",
+      "a": "деньги (неисчисляемое)"
+    },
+    {
+      "cat": "Слово",
+      "q": "a shopaholic",
+      "a": "шопоголик"
+    },
+    {
+      "cat": "Слово",
+      "q": "to catch one's eye",
+      "a": "броситься в глаза"
+    },
+    {
+      "cat": "Слово",
+      "q": "a wardrobe",
+      "a": "гардероб"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Trousers — единственное или множественное число?",
+      "a": "Только множественное: My trousers are tight."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "News — единственное или множественное число?",
+      "a": "Неисчисляемое, ед. число: The news is good."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Как посчитать trousers, jeans, glasses?",
+      "a": "a pair of: a pair of jeans, two pairs of trousers."
+    },
+    {
+      "cat": "Пример",
+      "q": "These skinny jeans … too tight.",
+      "a": "are"
+    },
+    {
+      "cat": "Пример",
+      "q": "This pair of glasses … broken.",
+      "a": "is"
+    },
+    {
+      "cat": "Пример",
+      "q": "Money … grow on trees.",
+      "a": "doesn't"
+    },
+    {
+      "cat": "Пример",
+      "q": "Your clothes … amazing!",
+      "a": "are"
+    },
+    {
+      "cat": "Пример",
+      "q": "My checked pyjamas … coffee stains on them.",
+      "a": "have"
+    },
+    {
+      "cat": "Пример",
+      "q": "No news … good news.",
+      "a": "is"
+    },
+    {
+      "cat": "Пример",
+      "q": "The scissors … been missing again.",
+      "a": "have"
+    },
+    {
+      "cat": "Пример",
+      "q": "Mathematics … always been my weakest subject.",
+      "a": "has"
+    },
+    {
+      "cat": "Факт",
+      "q": "Сколько лет Kade Massey и как давно он модель?",
+      "a": "Ему 15; он работает моделью с 12 лет, более 3 лет."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "jeans, trousers, shorts",
+      "title": "Только мн. число",
+      "text": "These skinny jeans are too tight. My trousers are a little tight."
+    },
+    {
+      "date": "news, money, mathematics",
+      "title": "Неисчисляемые, ед. число",
+      "text": "The news is good. Money doesn't grow on trees. Mathematics has always been my weakest subject."
+    },
+    {
+      "date": "a pair of + plural",
+      "title": "Парные предметы",
+      "text": "This pair of glasses is broken. A pair of trainers."
+    },
+    {
+      "date": "scissors, pyjamas",
+      "title": "Только мн. число",
+      "text": "The scissors have been missing again. My checked pyjamas have coffee stains."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "These skinny jeans … too tight.",
+      "opts": [
+        "are",
+        "is",
+        "has",
+        "does"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "The news … good today!",
+      "opts": [
+        "are",
+        "is",
+        "were",
+        "have"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "Money … grow on trees.",
+      "opts": [
+        "don't",
+        "aren't",
+        "doesn't",
+        "isn't"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "Time … money.",
+      "opts": [
+        "are",
+        "have",
+        "do",
+        "is"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "Which noun is always plural?",
+      "opts": [
+        "scissors",
+        "news",
+        "money",
+        "mathematics"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "A 'shopaholic' is a person who…",
+      "opts": [
+        "hates shops",
+        "loves shopping too much",
+        "works in a shop",
+        "sells clothes"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "Kade Massey has been a model … he was 12.",
+      "opts": [
+        "for",
+        "from",
+        "since",
+        "at"
+      ],
+      "correct": 2
+    }
+  ]
+}

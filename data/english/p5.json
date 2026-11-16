@@ -1,0 +1,215 @@
+{
+  "id": "5",
+  "title": "Lesson 5. On sale",
+  "subtitle": "Present Perfect Continuous, вопрос How long…? и распродажи",
+  "sections": [
+    {
+      "title": "1. Sales in Belarus",
+      "text": "Belarusian shops offer {sales} and many {bonus} programmes. They include {Christmas} and New Year sales, holiday sales around {Women's Day} (8 March), {Defenders' Day} (23 February), St Valentine's Day and {Easter}. In {August}, before the new school year begins, most shopping malls and markets organise «{back to school}» sales and fairs. In addition, both online and offline shops have {nights of sales}, {Black Fridays} and {weekend sales}.",
+      "chain": [
+        "sales + bonus programmes",
+        "Christmas / New Year, 8 March, 23 February, Easter",
+        "August — back to school",
+        "nights of sales, Black Fridays, weekend sales"
+      ]
+    },
+    {
+      "title": "2. Present Perfect Continuous",
+      "text": "Tense: the Present {Perfect} {Continuous}. Form: {have / has} + {been} + verb + {-ing}. We use it for an action that {started} in the past and {continues} up to now. The focus is on the {time period}, not on the result. It answers the question {How long}…? Signal words: {all day}, {for}, {since}. Examples: I've been waiting for my dad {for an hour}. We've been shopping {since 10 a.m.}. She hasn't been shopping {all day}. Have you been waiting for {a long time}?",
+      "chain": [
+        "have / has + been + V-ing",
+        "действие началось в прошлом и продолжается",
+        "фокус на времени: How long…?",
+        "all day, for, since"
+      ]
+    },
+    {
+      "title": "3. What has been happening?",
+      "text": "Tim is very tired: he's been {working hard} lately. Josh can buy a new car: he's been {saving money} for 3 years. Pat's French is really good: she's been {learning} it for 5 years. Tara looks fit: she's been doing {yoga} for 3 years. John's trainers are dirty: he's been {skateboarding} in the rain. Chris looks suntanned: he's been {sunbathing}. Claire is still learning to play the guitar: she's been taking {music lessons} for 2 years.",
+      "chain": [
+        "Tim — working hard",
+        "Josh — saving money",
+        "Pat — learning French",
+        "Tara — yoga",
+        "John — skateboarding in the rain",
+        "Chris — sunbathing"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "a sale",
+      "a": "распродажа"
+    },
+    {
+      "cat": "Слово",
+      "q": "online",
+      "a": "онлайн, в интернете"
+    },
+    {
+      "cat": "Слово",
+      "q": "offline",
+      "a": "офлайн, в обычном магазине"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Как образуется Present Perfect Continuous?",
+      "a": "have / has + been + V-ing."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Какой вопрос задаём в Present Perfect Continuous?",
+      "a": "How long…? How long have you been waiting?"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Какие слова-сигналы у Present Perfect Continuous?",
+      "a": "all day, for, since."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем Present Perfect Continuous?",
+      "a": "Действие началось в прошлом и продолжается до сих пор; важен период времени."
+    },
+    {
+      "cat": "Пример",
+      "q": "I've been waiting for my dad (for / since) an hour.",
+      "a": "for an hour"
+    },
+    {
+      "cat": "Пример",
+      "q": "We've been shopping (for / since) 10 a.m.",
+      "a": "since 10 a.m."
+    },
+    {
+      "cat": "Пример",
+      "q": "I've been looking for the right tie (for / since) ages!",
+      "a": "for ages"
+    },
+    {
+      "cat": "Диалог",
+      "q": "How long have you been collecting them? — …",
+      "a": "For more than five years."
+    },
+    {
+      "cat": "Диалог",
+      "q": "How long have you been cycling? — …",
+      "a": "Since I was 10."
+    },
+    {
+      "cat": "Пример",
+      "q": "Mike … the shopping for 2 hours.",
+      "a": "has been doing the shopping for 2 hours."
+    },
+    {
+      "cat": "Пример",
+      "q": "Christal … by the campfire since yesterday.",
+      "a": "has been sitting by the campfire since yesterday."
+    },
+    {
+      "cat": "Факт",
+      "q": "Когда в Беларуси проходят распродажи?",
+      "a": "Рождество и Новый год, 8 марта, 23 февраля, день святого Валентина, Пасха, «Back to school» в августе, ночи распродаж, Чёрные пятницы."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "have / has + been + V-ing",
+      "title": "Present Perfect Continuous",
+      "text": "Форма утверждения: She has been shopping."
+    },
+    {
+      "date": "hasn't / haven't been + V-ing",
+      "title": "Отрицание",
+      "text": "She hasn't been shopping all day."
+    },
+    {
+      "date": "Have / Has + subj. + been + V-ing?",
+      "title": "Вопрос",
+      "text": "Have you been waiting for a long time?"
+    },
+    {
+      "date": "How long …?",
+      "title": "Фокус на времени",
+      "text": "How long have you been collecting them? — For more than five years."
+    },
+    {
+      "date": "for + период / since + момент",
+      "title": "Signal words",
+      "text": "I've been waiting for an hour. We've been shopping since 10 a.m."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "Which form is Present Perfect Continuous?",
+      "opts": [
+        "have / has + V3",
+        "have / has been + V-ing",
+        "am / is / are + V-ing",
+        "did + V"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "We've been shopping … 10 a.m.",
+      "opts": [
+        "since",
+        "for",
+        "during",
+        "at"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "I've been standing here … 30 minutes.",
+      "opts": [
+        "since",
+        "from",
+        "for",
+        "at"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "Which question do these sentences answer?",
+      "opts": [
+        "How much…?",
+        "What time…?",
+        "How many…?",
+        "How long…?"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "Tim is tired. He … hard lately.",
+      "opts": [
+        "has been working",
+        "has worked",
+        "is working",
+        "worked"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Josh can buy a new car because he … money for 3 years.",
+      "opts": [
+        "is saving",
+        "has been saving",
+        "saved",
+        "has save"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "A sale is…",
+      "opts": [
+        "a time when goods cost less",
+        "a new shop",
+        "a type of tie",
+        "a credit card"
+      ],
+      "correct": 0
+    }
+  ]
+}

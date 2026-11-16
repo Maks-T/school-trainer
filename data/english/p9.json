@@ -1,0 +1,203 @@
+{
+  "id": "9",
+  "title": "Lesson 9. Unusual shops",
+  "subtitle": "Необычные магазины: Mr B's, Hamleys, The Evolution Store",
+  "labels": {
+    "timeline": "📍 Магазины и факты",
+    "tlHideLeft": "📅 Скрыть названия",
+    "tlHideRight": "🔍 Скрыть описания"
+  },
+  "sections": [
+    {
+      "title": "1. Mr B's Emporium of Reading Delights",
+      "text": "Mr B's Emporium of Reading Delights is a magical {book shop} in {Bath}, UK. It is located on {three} floors of an {18th} century house. It has a reading room {upstairs}, a {book spa}, big {armchairs} next to the fireplace and free {tea and coffee} for visitors. It was opened in {2006} and has {twice} been named the UK's best book shop.",
+      "chain": [
+        "book shop in Bath, UK",
+        "three floors, 18th century house",
+        "reading room, book spa, armchairs",
+        "opened in 2006, twice the best"
+      ]
+    },
+    {
+      "title": "2. Hamleys",
+      "text": "{Hamleys} in {London} is the oldest and the largest {toy shop} in the world. William Hamley opened his first shop in {1760}. The shop has {seven} floors and more than {50,000} toys, including computer games, plush toys and a large {Harry Potter} department. Around {five million} people visit it each year. There are {fifteen} other Hamleys stores in the UK and more than {90} worldwide.",
+      "chain": [
+        "London, 1760, William Hamley",
+        "oldest and largest toy shop",
+        "7 floors, 50,000+ toys",
+        "5 million visitors a year"
+      ]
+    },
+    {
+      "title": "3. The Evolution Store",
+      "text": "The {Evolution Store} is in {New York}, USA. It sells science and {natural history} collectables, for example a lollipop with a {scorpion} inside, a life-size {skeleton} and {meteorites}. It is a small {family business}, and most of the staff have an {art or science} background. Locals and tourists have been coming for {30 years}. It is like a {museum} you can shop in.",
+      "chain": [
+        "New York, USA",
+        "science and natural history",
+        "family business, 30 years",
+        "a museum you can shop in"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "an emporium",
+      "a": "большой магазин, торговый центр"
+    },
+    {
+      "cat": "Слово",
+      "q": "unusual",
+      "a": "необычный"
+    },
+    {
+      "cat": "Слово",
+      "q": "a collectable",
+      "a": "предмет коллекционирования"
+    },
+    {
+      "cat": "Слово",
+      "q": "a skeleton",
+      "a": "скелет"
+    },
+    {
+      "cat": "Слово",
+      "q": "a family business",
+      "a": "семейный бизнес"
+    },
+    {
+      "cat": "Слово",
+      "q": "a floor",
+      "a": "этаж"
+    },
+    {
+      "cat": "Факт",
+      "q": "Где находится Mr B's Emporium?",
+      "a": "В городе Bath, Великобритания."
+    },
+    {
+      "cat": "Факт",
+      "q": "Когда открылся Mr B's и чем знаменит?",
+      "a": "В 2006 году; дважды назван лучшим книжным магазином Великобритании."
+    },
+    {
+      "cat": "Факт",
+      "q": "Что есть в Mr B's для посетителей?",
+      "a": "Читальный зал, book spa, большие кресла у камина, бесплатные чай и кофе."
+    },
+    {
+      "cat": "Факт",
+      "q": "Какой магазин самый старый и самый большой в мире?",
+      "a": "Hamleys в Лондоне — магазин игрушек, основан в 1760 году."
+    },
+    {
+      "cat": "Факт",
+      "q": "Сколько игрушек и этажей в Hamleys?",
+      "a": "Более 50 000 игрушек, семь этажей."
+    },
+    {
+      "cat": "Факт",
+      "q": "Где находится The Evolution Store?",
+      "a": "В Нью-Йорке, США."
+    },
+    {
+      "cat": "Факт",
+      "q": "Что продаёт The Evolution Store?",
+      "a": "Товары по науке и естественной истории: метеориты, скелеты, леденец со скорпионом."
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Какой магазин — семейный бизнес?",
+      "a": "The Evolution Store."
+    },
+    {
+      "cat": "Вопрос",
+      "q": "Какой магазин не в Британии?",
+      "a": "The Evolution Store (Нью-Йорк, США)."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "Mr B's Emporium",
+      "title": "Bath, UK",
+      "text": "Book shop on three floors of an 18th-century house; opened in 2006; free tea and coffee."
+    },
+    {
+      "date": "Hamleys",
+      "title": "London, UK",
+      "text": "The oldest and largest toy shop in the world; founded in 1760; 7 floors, 50,000+ toys."
+    },
+    {
+      "date": "The Evolution Store",
+      "title": "New York, USA",
+      "text": "Science and natural history collectables; family business; a museum you can shop in."
+    },
+    {
+      "date": "William Hamley",
+      "title": "Founder",
+      "text": "Opened his first shop in London in 1760: his dream was the best toy shop in the world."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "Which shop is the oldest?",
+      "opts": [
+        "Hamleys",
+        "Mr B's",
+        "The Evolution Store",
+        "Harrods"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Which shop is not in Britain?",
+      "opts": [
+        "Mr B's",
+        "The Evolution Store",
+        "Hamleys",
+        "None of them"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "Which shop offers free tea and coffee?",
+      "opts": [
+        "Hamleys",
+        "The Evolution Store",
+        "Mr B's",
+        "Harrods"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "Which shop is a family business?",
+      "opts": [
+        "Mr B's",
+        "Hamleys",
+        "Harrods",
+        "The Evolution Store"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "When did William Hamley open his first shop?",
+      "opts": [
+        "in 1760",
+        "in 2006",
+        "in 1860",
+        "in 1990"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "The Evolution Store is like…",
+      "opts": [
+        "a toy factory",
+        "a museum you can shop in",
+        "a library",
+        "a cinema"
+      ],
+      "correct": 1
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "id": "6",
+  "title": "Lesson 6. I've been waiting",
+  "subtitle": "Present Perfect или Present Perfect Continuous; в магазине одежды",
+  "sections": [
+    {
+      "title": "1. Which tense?",
+      "text": "If an action has {finished} and the {result} is important, we use the {Present Perfect}: {have / has} + {V3}. If an action is {unfinished} and the {time period} is more important than the result, we use the {Present Perfect Continuous}: {have been / has been} + {V-ing}. Compare: I have {already found} a T-shirt (the result is important). I've been {trying on} these clothes (I am still doing it). I've been waiting for you {for ages}. To {try something on} means to put on clothes in a shop to see if they fit.",
+      "chain": [
+        "finished + result → Present Perfect",
+        "unfinished + time period → Present Perfect Continuous",
+        "have + V3 / have been + V-ing",
+        "try on = примерять"
+      ]
+    },
+    {
+      "title": "2. In the department store",
+      "text": "Nick has been {waiting} for Rosie for ages. Rosie has been {trying on} clothes and she hasn't {decided} yet. Nick says: You've been {choosing} for hours! Rosie has already {found} a T-shirt for the party, but she needs a {skirt}. Nick suggests a {striped} one. Rosie thinks it is too {long}, but Nick says it is {knee-length} and looks very {smart}. At last Rosie says: All right, I'll take the {skirt} too. Then they go to the {sports} department.",
+      "chain": [
+        "Nick: I've been waiting for ages",
+        "Rosie: I've been trying on clothes",
+        "Rosie: I have already found a T-shirt",
+        "Nick: Have you tried it on?"
+      ]
+    },
+    {
+      "title": "3. An e-mail to Kate",
+      "text": "Bill {has caught} a cold, so he {has been lying} in bed all day. Hanna {has bought} a new dress in an online shop. The dress is too tight, so she {has been doing} morning exercises for two weeks and {has been trying} to lose weight. Alice {hasn't seen} Dave and Ted for two weeks. They {have been shopping} since the end-of-the-year sales started, but they {haven't bought} anything yet.",
+      "chain": [
+        "has caught a cold (result)",
+        "has been lying in bed all day (period)",
+        "has been doing exercises for two weeks",
+        "haven't bought anything yet (result)"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "cat": "Слово",
+      "q": "to try something on",
+      "a": "примерять что-то"
+    },
+    {
+      "cat": "Слово",
+      "q": "knee-length",
+      "a": "длиной до колена"
+    },
+    {
+      "cat": "Слово",
+      "q": "already",
+      "a": "уже"
+    },
+    {
+      "cat": "Слово",
+      "q": "yet",
+      "a": "ещё (в отрицании), уже (в вопросе)"
+    },
+    {
+      "cat": "Характер",
+      "q": "arrogant",
+      "a": "высокомерный"
+    },
+    {
+      "cat": "Характер",
+      "q": "bossy",
+      "a": "властный, командующий"
+    },
+    {
+      "cat": "Характер",
+      "q": "dishonest / honest",
+      "a": "нечестный / честный"
+    },
+    {
+      "cat": "Характер",
+      "q": "impatient / patient",
+      "a": "нетерпеливый / терпеливый"
+    },
+    {
+      "cat": "Характер",
+      "q": "reserved",
+      "a": "сдержанный"
+    },
+    {
+      "cat": "Характер",
+      "q": "selfish",
+      "a": "эгоистичный"
+    },
+    {
+      "cat": "Характер",
+      "q": "stubborn",
+      "a": "упрямый"
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем Present Perfect?",
+      "a": "Действие закончилось, важен результат: I have already found a T-shirt."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Когда используем Present Perfect Continuous?",
+      "a": "Действие не закончилось, важен период времени: I've been waiting for you for ages."
+    },
+    {
+      "cat": "Грамматика",
+      "q": "Формулы двух времён?",
+      "a": "Present Perfect: have / has + V3. Present Perfect Continuous: have / has been + V-ing."
+    },
+    {
+      "cat": "Пример",
+      "q": "Bill (has caught / has been catching) a cold.",
+      "a": "has caught (результат)."
+    },
+    {
+      "cat": "Пример",
+      "q": "He has (lied / has been lying) in bed all day long.",
+      "a": "has been lying (длительность)."
+    },
+    {
+      "cat": "Пример",
+      "q": "They (have shopped / have been shopping) since the sales started.",
+      "a": "have been shopping."
+    },
+    {
+      "cat": "Пример",
+      "q": "They (haven't bought / haven't been buying) anything yet.",
+      "a": "haven't bought (результат)."
+    }
+  ],
+  "timeline": [
+    {
+      "date": "have / has + V3",
+      "title": "Present Perfect",
+      "text": "Результат важен: I have already found a T-shirt. Have you tried it on?"
+    },
+    {
+      "date": "have / has been + V-ing",
+      "title": "Present Perfect Continuous",
+      "text": "Период важен: I've been trying on these clothes. You've been choosing for hours."
+    },
+    {
+      "date": "finished action",
+      "title": "Законченное действие",
+      "text": "I haven't decided yet. Bill has caught a cold."
+    },
+    {
+      "date": "unfinished action",
+      "title": "Незаконченное действие",
+      "text": "I've been waiting for you for ages! She has been doing exercises for two weeks."
+    }
+  ],
+  "quiz": [
+    {
+      "q": "The action has finished and the result is important. Use…",
+      "opts": [
+        "Present Perfect",
+        "Present Perfect Continuous",
+        "Present Simple",
+        "Past Continuous"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "The action is unfinished and the time period is important. Use…",
+      "opts": [
+        "Present Perfect",
+        "Present Perfect Continuous",
+        "Past Simple",
+        "Future Simple"
+      ],
+      "correct": 1
+    },
+    {
+      "q": "I … already … a T-shirt for the party.",
+      "opts": [
+        "have … been finding",
+        "am … finding",
+        "have … found",
+        "did … find"
+      ],
+      "correct": 2
+    },
+    {
+      "q": "You … for hours! Come on, decide!",
+      "opts": [
+        "'ve chosen",
+        "choose",
+        "are chosen",
+        "'ve been choosing"
+      ],
+      "correct": 3
+    },
+    {
+      "q": "To 'try something on' means…",
+      "opts": [
+        "to put on clothes to see if they fit",
+        "to buy clothes online",
+        "to wash clothes",
+        "to throw clothes away"
+      ],
+      "correct": 0
+    },
+    {
+      "q": "Someone who does not like waiting is…",
+      "opts": [
+        "patient",
+        "impatient",
+        "honest",
+        "reserved"
+      ],
+      "correct": 1
+    }
+  ]
+}

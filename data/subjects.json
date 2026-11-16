@@ -180,10 +180,26 @@
       "icon": "🌍",
       "color": "#0284c7",
       "colorSoft": "#e0f2fe",
-      "description": "Units по темам: внешность, характер, дружба, спорт, путешествия",
-      "status": "planned",
+      "labels": {"timeline": "📘 Грамматика", "tlHideLeft": "📅 Скрыть конструкции", "tlHideRight": "🔍 Скрыть примеры"},
+      "description": "Units по темам: Shopping — магазины, одежда, Present Perfect, too / enough",
+      "status": "ready",
       "sources": ["english_7"],
-      "sections": []
+      "sections": [
+        {
+          "title": "Unit 3. Shopping",
+          "topics": [
+            { "p": 1, "num": "Lesson 1", "title": "Shops and stores", "desc": "Типы магазинов и Present Perfect с for и since" },
+            { "p": 2, "num": "Lesson 2", "title": "Nation of shoppers", "desc": "Покупки в Великобритании и Беларуси: High Street, Harrods, ГУМ, Комаровка" },
+            { "p": 3, "num": "Lesson 3", "title": "You are what you wear", "desc": "Одежда, описания и артикли с названиями одежды" },
+            { "p": 4, "num": "Lesson 4", "title": "Grandma's presents", "desc": "too и enough: слишком и достаточно" },
+            { "p": 5, "num": "Lesson 5", "title": "On sale", "desc": "Present Perfect Continuous, вопрос How long…? и распродажи" },
+            { "p": 6, "num": "Lesson 6", "title": "I've been waiting", "desc": "Present Perfect или Present Perfect Continuous; в магазине одежды" },
+            { "p": 7, "num": "Lesson 7", "title": "Shopping habits", "desc": "Существительные только в ед. или только во мн. числе; интервью с моделью" },
+            { "p": 8, "num": "Lesson 8", "title": "Many questions", "desc": "Размеры, материалы и вопросы о товаре" },
+            { "p": 9, "num": "Lesson 9", "title": "Unusual shops", "desc": "Необычные магазины: Mr B's, Hamleys, The Evolution Store" }
+          ]
+        }
+      ]
     }
   ]
 }
