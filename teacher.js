@@ -94,6 +94,8 @@ async function tchChat(messages, { json = true } = {}) {
     }
 }
 
+function tchSys(tpl) { return tpl.replace('{SUBJECT}', (subject && subject.title) || 'школьный предмет'); }
+
 function tchParseJson(text) {
     let t = String(text).replace(/<think>[\s\S]*?<\/think>/g, '').replace(/```(?:json)?/g, '');
     const a = t.indexOf('{'), b = t.lastIndexOf('}');
@@ -101,11 +103,12 @@ function tchParseJson(text) {
     return JSON.parse(t.slice(a, b + 1));
 }
 
-const TCH_SYS_RETELL = `Ты — доброжелательный школьный учитель истории 7 класса. Ты проверяешь устный пересказ ученика.
+const TCH_SYS_RETELL = `Ты — доброжелательный школьный учитель 7 класса, предмет: {SUBJECT}. Ты проверяешь устный пересказ ученика.
 Правила:
 - Оценивай ТОЛЬКО по тексту учебника, который дан ниже. Не добавляй фактов от себя.
 - Ученик рассказывает своими словами: синонимы, другой порядок и упрощения допустимы, если смысл верный.
 - Текст мог быть получен голосовым вводом: не обращай внимания на опечатки, пунктуацию и неточно распознанные слова, если понятно, что имелось в виду.
+- Химические формулы и обозначения могут быть записаны без нижних индексов или словами (H2O = H₂O, «аш два о»): это не ошибка.
 - Для КАЖДОГО пункта чек-листа выбери статус:
   ok — смысл пункта передан верно;
   partial — пункт упомянут неполно или неточно (например, без даты или без главной детали);
@@ -116,8 +119,8 @@ const TCH_SYS_RETELL = `Ты — доброжелательный школьны
 Ответь строго одним JSON-объектом без пояснений:
 {"points":[{"id":"1.1","status":"ok","comment":""}],"feedback":"..."}`;
 
-const TCH_SYS_ANSWER = `Ты — доброжелательный школьный учитель истории 7 класса. Ученик отвечает на твой дополнительный вопрос.
-Сравни ответ с эталоном из учебника. Смысл важнее точных слов, опечатки голосового ввода не учитывай.
+const TCH_SYS_ANSWER = `Ты — доброжелательный школьный учитель 7 класса, предмет: {SUBJECT}. Ученик отвечает на твой дополнительный вопрос.
+Сравни ответ с эталоном из учебника. Смысл важнее точных слов, опечатки голосового ввода и формулы без индексов (H2O = H₂O) не учитывай.
 status: ok — ответ верный по смыслу; partial — частично верный или неполный; wrong — неверный или «не знаю».
 comment: 1–2 коротких предложения ученику на «ты». Если ответ неполный или неверный — мягко поправь и назови верный ответ по учебнику.
 Ответь строго одним JSON-объектом: {"status":"ok","comment":"..."}`;
@@ -224,7 +227,7 @@ function tchStart(secId) {
     const sec = tchSection(secId);
     tch.s = { secId, sec, phase: 'retell', msgs: [], status: {}, comments: {}, qStatus: {}, queue: [], qi: 0, grade0: null };
     tch.view = 'session';
-    tchSay('teacher', `Расскажи своими словами: «${sec.title}». Постарайся вспомнить как можно больше: события, даты, имена, причины и итоги.`);
+    tchSay('teacher', `Расскажи своими словами: «${sec.title}». ${tch.ds.hint || 'Постарайся вспомнить как можно больше: главные мысли, понятия, факты, примеры и выводы.'}`);
     tchRender();
 }
 
@@ -307,7 +310,7 @@ async function tchCheckRetell(text) {
     try {
         const list = s.sec.points.map(p => `${p.id}: ${p.text}`).join('\n');
         const raw = await tchChat([
-            { role: 'system', content: TCH_SYS_RETELL },
+            { role: 'system', content: tchSys(TCH_SYS_RETELL) },
             { role: 'user', content: `ТЕКСТ УЧЕБНИКА:\n${s.sec.text}\n\nЧЕК-ЛИСТ:\n${list}\n\nПЕРЕСКАЗ УЧЕНИКА:\n${text}` }
         ]);
         const res = tchParseJson(raw);
@@ -433,7 +436,7 @@ async function tchCheckAnswer(text) {
     s.busy = true; tchRender();
     try {
         const raw = await tchChat([
-            { role: 'system', content: TCH_SYS_ANSWER },
+            { role: 'system', content: tchSys(TCH_SYS_ANSWER) },
             { role: 'user', content: `ТЕКСТ УЧЕБНИКА:\n${s.sec.text}\n\nВОПРОС: ${p.q}\nЭТАЛОН (пункт чек-листа): ${p.text}\nОТВЕТ УЧЕНИКА: ${text}` }
         ]);
         const r = tchParseJson(raw);

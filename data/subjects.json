@@ -95,7 +95,7 @@
     },
     {
       "id": "chemistry",
-      "tools": [{"id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json"}, {"id": "mrcalc", "icon": "🧮", "title": "Калькулятор Mr", "type": "mr-calc", "data": "tools/periodic.json"}, {"id": "valence", "icon": "🔗", "title": "Калькулятор валентности", "type": "valence-calc", "data": "tools/periodic.json"}],
+      "tools": [{"id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json"}, {"id": "mrcalc", "icon": "🧮", "title": "Калькулятор Mr", "type": "mr-calc", "data": "tools/periodic.json"}, {"id": "valence", "icon": "🔗", "title": "Калькулятор валентности", "type": "valence-calc", "data": "tools/periodic.json"}, {"id": "teacher", "icon": "🧑‍🏫", "title": "Учитель", "type": "teacher"}],
       "labels": {"timeline": "🧪 Формулы и расчёты", "tlHideLeft": "📅 Скрыть формулы", "tlHideRight": "🔍 Скрыть расчёты"},
       "title": "Химия",
       "icon": "⚗️",
@@ -118,6 +118,7 @@
     },
     {
       "id": "biology",
+      "tools": [{"id": "teacher", "icon": "🧑‍🏫", "title": "Учитель", "type": "teacher"}],
       "title": "Биология",
       "icon": "🧬",
       "color": "#0d9488",
