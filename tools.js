@@ -1,7 +1,7 @@
 // Инструменты-помощники предмета (кнопки в шапке тренажёра).
 // Описываются в data/subjects.json → subject.tools:
 //   { "id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json" }
-// Типы: "periodic" — таблица Менделеева, "mr-calc" — калькулятор Mr,
+// Типы: "periodic" — таблица Менделеева, "mr-calc" — калькулятор Mr, "valence-calc" — калькулятор валентности,
 //       "tables" — набор таблиц (data: {tables:[{title, columns, rows}]}), "image" — картинка (src), "html" — готовый HTML (html).
 
 const toolCache = {};
@@ -42,6 +42,7 @@ async function openTool(i) {
         const data = await loadToolData(tool);
         if (tool.type === 'periodic') renderPeriodic(body, data.elements);
         else if (tool.type === 'mr-calc') renderMrCalc(body, data.elements);
+        else if (tool.type === 'valence-calc') renderValenceCalc(body, data.elements);
         else if (tool.type === 'tables') renderTables(body, data.tables);
         else if (tool.type === 'image') body.innerHTML = `<img class="tool-img" src="data/${subject.id}/${toolEsc(tool.src)}" alt="${toolEsc(tool.title)}">`;
         else if (tool.type === 'html') body.innerHTML = tool.html || '';
@@ -186,6 +187,160 @@ function calcMr() {
         total = Math.round(total * 100) / 100;
         out.innerHTML = `<div class="mr-result">Mr(${toolEsc(val.trim())}) = ${parts.join(' + ')} = <strong>${total}</strong></div>
             <div class="tool-scroll"><table class="tool-table"><thead><tr><th>Элемент</th><th>Число атомов</th><th>Ar</th><th>Вклад</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+    } catch (err) {
+        out.innerHTML = `<div class="mr-error">${toolEsc(err.message)}</div>`;
+    }
+}
+
+// ---------- Калькулятор валентности (по § 9 «Валентность») ----------
+// Постоянная и переменная валентность — как в учебнике химии 7 класса.
+const VAL_CONST = { H: 1, Ag: 1, Na: 1, K: 1, O: 2, Mg: 2, Ca: 2, Zn: 2, Al: 3 };
+const VAL_VAR = { S: [2, 4, 6], N: [1, 2, 3, 4, 5], P: [3, 5], Fe: [2, 3], Cu: [1, 2], Cl: [1, 3, 5, 7] };
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+const SUBS = '₀₁₂₃₄₅₆₇₈₉';
+
+function valRoman(n) { return ROMAN[n] || String(n); }
+function valSub(n) { return n === 1 ? '' : String(n).replace(/\d/g, d => SUBS[d]); }
+function valGcd(a, b) { return b ? valGcd(b, a % b) : a; }
+function valLcm(a, b) { return a / valGcd(a, b) * b; }
+function valName(s) { const e = (window._valEls || []).find(x => x.s === s); return e ? e.name : s; }
+function valHint(s) {
+    if (s in VAL_CONST) return `постоянная валентность ${valRoman(VAL_CONST[s])}`;
+    if (s in VAL_VAR) return `переменная валентность: ${VAL_VAR[s].map(valRoman).join(', ')}`;
+    return '';
+}
+
+function renderValenceCalc(body, els) {
+    window._mrEls = window._mrEls || {};
+    els.forEach(e => { window._mrEls[e.s] = parseFloat(String(e.ar).replace(/[\[\]]/g, '')); });
+    window._valEls = els;
+    const opts = sel => ROMAN.slice(1).map((r, i) => `<option value="${i + 1}"${i + 1 === sel ? ' selected' : ''}>${r}</option>`).join('');
+    body.innerHTML = `
+        <div class="val-tabs">
+            <button class="mode-btn active" id="val-tab-1" onclick="valTab(1)">🔍 Валентность по формуле</button>
+            <button class="mode-btn" id="val-tab-2" onclick="valTab(2)">✍️ Формула по валентности</button>
+        </div>
+        <div id="val-pane-1">
+            <p class="tool-note" style="margin-top:0">Введите формулу бинарного соединения (из двух элементов). Один из элементов должен иметь постоянную валентность: H, Ag, Na, K (I); O, Mg, Ca, Zn (II); Al (III).</p>
+            <div class="mr-row">
+                <input id="val-input" class="mr-input" type="text" value="Fe2O3" autocomplete="off" spellcheck="false" oninput="calcValence()">
+                <div class="mr-quick">${['SO3', 'SO2', 'NH3', 'CH4', 'Fe2O3', 'P2O5', 'Cl2O7', 'CaCl2', 'Na2S'].map(f =>
+                    `<button class="mode-btn" onclick="document.getElementById('val-input').value='${f}';calcValence()">${f}</button>`).join('')}</div>
+            </div>
+            <div id="val-out" class="mr-out"></div>
+        </div>
+        <div id="val-pane-2" style="display:none">
+            <p class="tool-note" style="margin-top:0">Введите символы двух элементов и их валентности. Для элементов с постоянной валентностью она подставится сама.</p>
+            <div class="val-pair">
+                <input id="val-a" class="mr-input val-el" type="text" value="Fe" autocomplete="off" spellcheck="false" oninput="valAuto('a');buildFormula()">
+                <select id="val-av" class="val-sel" onchange="buildFormula()">${opts(3)}</select>
+                <span class="val-plus">+</span>
+                <input id="val-b" class="mr-input val-el" type="text" value="O" autocomplete="off" spellcheck="false" oninput="valAuto('b');buildFormula()">
+                <select id="val-bv" class="val-sel" onchange="buildFormula()">${opts(2)}</select>
+            </div>
+            <div class="mr-quick" style="margin:8px 0 12px">${[['N', 3, 'O', 2], ['P', 5, 'O', 2], ['C', 4, 'O', 2], ['Al', 3, 'O', 2], ['Fe', 3, 'S', 2], ['Mg', 2, 'P', 3], ['Cu', 1, 'O', 2]].map(([a, av, b, bv]) =>
+                `<button class="mode-btn" onclick="valSet('${a}',${av},'${b}',${bv})">${a}(${valRoman(av)}) + ${b}(${valRoman(bv)})</button>`).join('')}</div>
+            <div id="val-out2" class="mr-out"></div>
+        </div>
+        <p class="tool-note">Правило: в формуле бинарного соединения общее число единиц валентности одного элемента равно общему числу единиц валентности другого. Общее число единиц = валентность × индекс.</p>`;
+    calcValence();
+    buildFormula();
+}
+
+function valTab(n) {
+    [1, 2].forEach(i => {
+        document.getElementById('val-pane-' + i).style.display = i === n ? '' : 'none';
+        document.getElementById('val-tab-' + i).classList.toggle('active', i === n);
+    });
+}
+
+function valSet(a, av, b, bv) {
+    document.getElementById('val-a').value = a; document.getElementById('val-av').value = av;
+    document.getElementById('val-b').value = b; document.getElementById('val-bv').value = bv;
+    buildFormula();
+}
+
+function valAuto(side) {
+    const s = document.getElementById('val-' + side).value.trim();
+    if (s in VAL_CONST) document.getElementById(`val-${side}v`).value = VAL_CONST[s];
+    else if (s in VAL_VAR && !VAL_VAR[s].includes(+document.getElementById(`val-${side}v`).value))
+        document.getElementById(`val-${side}v`).value = VAL_VAR[s][0];
+}
+
+function calcValence() {
+    const out = document.getElementById('val-out');
+    const raw = document.getElementById('val-input').value.trim();
+    try {
+        if (/[()]/.test(raw)) throw new Error('Скобки не поддерживаются: введите бинарное соединение, например Fe2O3');
+        const SUB = { '₀': 0, '₁': 1, '₂': 2, '₃': 3, '₄': 4, '₅': 5, '₆': 6, '₇': 7, '₈': 8, '₉': 9 };
+        const s = raw.replace(/\s+/g, '').replace(/[₀-₉]/g, ch => SUB[ch]);
+        const order = [], idx = {};
+        const re = /([A-Z][a-z]?)(\d*)/g;
+        let m, consumed = '';
+        while ((m = re.exec(s)) && m[0]) {
+            const el = m[1];
+            if (!(el in window._mrEls)) throw new Error(`Нет элемента «${el}»`);
+            if (!(el in idx)) order.push(el);
+            idx[el] = (idx[el] || 0) + (m[2] ? parseInt(m[2], 10) : 1);
+            consumed += m[0];
+        }
+        if (!s) throw new Error('Введите формулу');
+        if (consumed !== s) throw new Error('Непонятная запись формулы');
+        if (order.length !== 2) throw new Error('Нужно бинарное соединение — ровно два элемента');
+        const [a, b] = order;
+        const knownEl = b in VAL_CONST ? b : a in VAL_CONST ? a : null;
+        if (!knownEl) throw new Error(`Ни у ${a}, ни у ${b} нет постоянной валентности — по этой формуле валентность не определить`);
+        const unk = knownEl === a ? b : a;
+        const kv = VAL_CONST[knownEl], total = kv * idx[knownEl];
+        const x = total / idx[unk];
+        const fml = `${a}${valSub(idx[a])}${b}${valSub(idx[b])}`;
+        let steps = `<div class="val-step">1) ${knownEl} — ${valName(knownEl)}, постоянная валентность <b>${valRoman(kv)}</b></div>
+            <div class="val-step">2) Общее число единиц валентности ${knownEl}: ${valRoman(kv)} · ${idx[knownEl]} = <b>${total}</b></div>
+            <div class="val-step">3) Столько же единиц у ${unk}: x · ${idx[unk]} = ${total}, x = ${total} : ${idx[unk]} = <b>${Number.isInteger(x) ? x : x.toFixed(2)}</b></div>`;
+        if (!Number.isInteger(x) || x < 1 || x > 8) {
+            out.innerHTML = steps + `<div class="mr-error">Валентность получилась не целым числом — проверьте формулу.</div>`;
+            return;
+        }
+        let note = '';
+        if (unk in VAL_CONST && VAL_CONST[unk] !== x) note = `<div class="mr-error">У ${unk} постоянная валентность ${valRoman(VAL_CONST[unk])} — такая формула неверна.</div>`;
+        else if (unk in VAL_VAR && !VAL_VAR[unk].includes(x)) note = `<div class="tool-note">В учебнике для ${unk} указаны значения ${VAL_VAR[unk].map(valRoman).join(', ')}.</div>`;
+        else if (valHint(unk)) note = `<div class="tool-note">${unk}: ${valHint(unk)}.</div>`;
+        const ra = unk === a ? valRoman(x) : valRoman(kv), rb = unk === b ? valRoman(x) : valRoman(kv);
+        out.innerHTML = `<div class="val-formula"><span class="val-cell"><i>${ra}</i>${a}${valSub(idx[a])}</span><span class="val-cell"><i>${rb}</i>${b}${valSub(idx[b])}</span></div>
+            <div class="mr-result">Валентность ${unk} (${valName(unk)}) в ${fml} = <strong>${valRoman(x)}</strong></div>${steps}${note}`;
+    } catch (err) {
+        out.innerHTML = `<div class="mr-error">${toolEsc(err.message)}</div>`;
+    }
+}
+
+function buildFormula() {
+    const out = document.getElementById('val-out2');
+    const a = document.getElementById('val-a').value.trim(), b = document.getElementById('val-b').value.trim();
+    const av = +document.getElementById('val-av').value, bv = +document.getElementById('val-bv').value;
+    try {
+        [a, b].forEach(el => {
+            if (!el) throw new Error('Введите символы обоих элементов');
+            if (!/^[A-Z][a-z]?$/.test(el) || !(el in window._mrEls)) throw new Error(`Нет элемента «${el}» (регистр важен: Fe, Cl, O)`);
+        });
+        if (a === b) throw new Error('Нужны два разных элемента');
+        const warn = [];
+        [[a, av], [b, bv]].forEach(([el, v]) => {
+            if (el in VAL_CONST && VAL_CONST[el] !== v) warn.push(`У ${el} постоянная валентность ${valRoman(VAL_CONST[el])}.`);
+            if (el in VAL_VAR && !VAL_VAR[el].includes(v)) warn.push(`В учебнике для ${el} указаны значения ${VAL_VAR[el].map(valRoman).join(', ')}.`);
+        });
+        const lcm = valLcm(av, bv), ia = lcm / av, ib = lcm / bv;
+        const g = valGcd(bv, av);
+        const fml = `${a}${valSub(ia)}${b}${valSub(ib)}`;
+        const cross = `${a}${valSub(bv)}${b}${valSub(av)}`;
+        out.innerHTML = `<div class="val-formula"><span class="val-cell"><i>${valRoman(av)}</i>${a}${valSub(ia)}</span><span class="val-cell"><i>${valRoman(bv)}</i>${b}${valSub(ib)}</span></div>
+            <div class="mr-result">Формула: <strong>${fml}</strong></div>
+            <div class="val-step">1) Записываем символы и валентности: ${a}(${valRoman(av)}) ${b}(${valRoman(bv)})</div>
+            <div class="val-step">2) НОК валентностей ${av} и ${bv} = <b>${lcm}</b></div>
+            <div class="val-step">3) Индексы: ${lcm} : ${valRoman(av)} = <b>${ia}</b> (у ${a}), ${lcm} : ${valRoman(bv)} = <b>${ib}</b> (у ${b})</div>
+            <div class="val-step">4) Записываем индексы (индекс «1» не пишут): <b>${fml}</b></div>
+            <div class="val-step">Крест-накрест: ${cross}${g > 1 ? ` → сокращаем на ${g} → <b>${fml}</b>` : ''}</div>
+            <div class="val-step">Проверка: ${valRoman(av)} · ${ia} = ${av * ia}, ${valRoman(bv)} · ${ib} = ${bv * ib} ✓</div>
+            ${warn.map(w => `<div class="tool-note">⚠️ ${toolEsc(w)}</div>`).join('')}`;
     } catch (err) {
         out.innerHTML = `<div class="mr-error">${toolEsc(err.message)}</div>`;
     }
