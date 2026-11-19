@@ -2,7 +2,7 @@
 // Описываются в data/subjects.json → subject.tools:
 //   { "id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json" }
 // Помощники получают контекст открытого параграфа — см. getToolContext() и поле toolContext в JSON параграфа.
-// Типы: "periodic" — таблица Менделеева, "mr-calc" — калькулятор Mr, "valence-calc" — калькулятор валентности,
+// Типы: "periodic" — таблица Менделеева (как в учебнике, с валентностью), "mr-calc" — калькулятор Mr, "valence-calc" — калькулятор валентности,
 //       "tables" — набор таблиц (data: {tables:[{title, columns, rows}]}), "image" — картинка (src), "html" — готовый HTML (html).
 
 const toolCache = {};
@@ -13,8 +13,9 @@ function initTools() {
     const tools = (subject && subject.tools) || [];
     if (!tools.length) { bar.style.display = 'none'; return; }
     bar.innerHTML = '<span class="tools-label">🧰 Помощники:</span>' + tools.map((t, i) =>
-        `<button class="tool-btn" onclick="openTool(${i})">${t.icon || '🔧'} ${t.title}</button>`).join('');
+        `<button class="tool-btn" id="tool-btn-${i}" onclick="openTool(${i})">${t.icon || '🔧'} ${t.title}</button>`).join('');
     bar.style.display = 'flex';
+    initToolDock();
 }
 
 function toolEsc(t) {
@@ -39,10 +40,12 @@ async function openTool(i) {
     const body = document.getElementById('tool-body');
     body.innerHTML = '<p class="tool-note">Загрузка…</p>';
     modal.classList.add('open');
+    applyDockMode();
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.toggle('active', b.id === `tool-btn-${i}`));
     try {
         const tdata = await loadToolData(tool);
         const ctx = tdata && tdata.elements ? getToolContext(tool, tdata.elements) : null;
-        if (tool.type === 'periodic') renderPeriodic(body, tdata.elements);
+        if (tool.type === 'periodic') renderPeriodic(body, tdata.elements, ctx);
         else if (tool.type === 'mr-calc') renderMrCalc(body, tdata.elements, ctx);
         else if (tool.type === 'valence-calc') renderValenceCalc(body, tdata.elements, ctx);
         else if (tool.type === 'tables') renderTables(body, tdata.tables);
@@ -69,17 +72,18 @@ function paragraphLabel() {
     return t ? t.num : 'параграфа';
 }
 
-function paragraphText() {
-    if (typeof data === 'undefined' || !data) return '';
-    const parts = [data.title, data.subtitle];
-    (data.sections || []).forEach(s => {
+function paragraphText(d) {
+    if (d === undefined) d = typeof data !== 'undefined' ? data : null;
+    if (!d) return '';
+    const parts = [d.title, d.subtitle];
+    (d.sections || []).forEach(s => {
         parts.push(s.title, s.text, ...(s.chain || []));
         (s.images || []).forEach(i => parts.push(i.caption));
     });
-    (data.flashcards || []).forEach(c => parts.push(c.q, c.a));
-    (data.timeline || []).forEach(t => parts.push(t.date, t.title, t.text));
+    (d.flashcards || []).forEach(c => parts.push(c.q, c.a));
+    (d.timeline || []).forEach(t => parts.push(t.date, t.title, t.text));
     // из теста — только вопрос и правильный ответ: неверные варианты часто содержат ошибочные формулы
-    (data.quiz || []).forEach(q => parts.push(q.q, (q.opts || [])[q.correct]));
+    (d.quiz || []).forEach(q => parts.push(q.q, (q.opts || [])[q.correct]));
     return parts.filter(Boolean).join('\n').replace(/[{}]/g, '');
 }
 
@@ -153,15 +157,134 @@ function getToolContext(tool, els) {
     const manual = (own.formulas || []).map(toDigits).filter(f => formulaInfo(f, symbols));
     const auto = own.auto === false ? [] : extractFormulas(paragraphText(), symbols);
     const formulas = [...new Set([...manual, ...auto])];
-    return { label: paragraphLabel(), formulas, pairs: own.pairs || [] };
+    return { label: paragraphLabel(), formulas, pairs: own.pairs || [], elements: extractElements(paragraphText(), formulas, symbols) };
+}
+
+// Элементы параграфа: из формул + отдельно стоящие символы (Mg, S, Fe…). I и V пропускаем — это римские цифры.
+function extractElements(text, formulas, symbols) {
+    const set = new Set();
+    formulas.forEach(f => (f.match(/[A-Z][a-z]?/g) || []).forEach(el => symbols.has(el) && set.add(el)));
+    const re = /(?<![A-Za-z0-9₀-₉])([A-Z][a-z]?)(?![A-Za-z0-9₀-₉(])/g;
+    let m;
+    while ((m = re.exec(text))) if (symbols.has(m[1]) && m[1] !== 'I' && m[1] !== 'V') set.add(m[1]);
+    return set;
 }
 
 function ctxChips(list, onclickFn) {
     return list.map(f => `<button class="mode-btn ctx-chip" onclick="${onclickFn}('${f}')">${toSubs(f)}</button>`).join('');
 }
 
-function closeTool() { document.getElementById('tool-modal').classList.remove('open'); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTool(); });
+// ---------- Режимы окна помощника ----------
+// modal — окно по центру с затемнением; right / bottom — закреплён сбоку / снизу, урок можно проходить;
+// float — плавающее окно (перетаскивание за шапку, размер — за правый нижний угол).
+const DOCK_MODES = [
+    ['modal', '⛶', 'В окне по центру'],
+    ['right', '◧', 'Закрепить справа'],
+    ['bottom', '⬓', 'Закрепить снизу'],
+    ['float', '🪟', 'Плавающее окно']
+];
+const dockState = { mode: 'modal', right: 560, bottom: 340, fx: null, fy: 90, fw: 560, fh: 520 };
+
+function dockLoad() {
+    try { Object.assign(dockState, JSON.parse(localStorage.getItem('toolDock') || '{}')); } catch (e) { /* хранилище недоступно */ }
+}
+function dockSave() {
+    try { localStorage.setItem('toolDock', JSON.stringify(dockState)); } catch (e) { /* хранилище недоступно */ }
+}
+
+function initToolDock() {
+    dockLoad();
+    const header = document.querySelector('#tool-modal .tool-header');
+    if (!header || header.querySelector('.dock-btns')) return;
+    const close = header.querySelector('.tool-close');
+    const box = document.createElement('div');
+    box.className = 'dock-btns';
+    box.innerHTML = DOCK_MODES.map(([m, icon, title]) =>
+        `<button class="dock-btn" data-mode="${m}" title="${title}" aria-label="${title}" onclick="setDockMode('${m}')">${icon}</button>`).join('');
+    header.insertBefore(box, close);
+    const dialog = document.querySelector('#tool-modal .tool-dialog');
+    const handle = document.createElement('div');
+    handle.className = 'dock-handle';
+    dialog.appendChild(handle);
+    handle.addEventListener('pointerdown', dockResizeStart);
+    header.addEventListener('pointerdown', dockDragStart);
+    window.addEventListener('resize', () => { if (document.getElementById('tool-modal').classList.contains('open')) applyDockMode(); });
+    // Плавающее окно: размер, изменённый мышью, запоминаем
+    if (window.ResizeObserver) new ResizeObserver(() => {
+        if (effectiveMode() === 'float' && document.getElementById('tool-modal').classList.contains('open')) {
+            dockState.fw = dialog.offsetWidth; dockState.fh = dialog.offsetHeight; dockSave();
+        }
+    }).observe(dialog);
+}
+
+function effectiveMode() {
+    // на узком экране «справа» превращается в «снизу»
+    return dockState.mode === 'right' && window.innerWidth < 760 ? 'bottom' : dockState.mode;
+}
+
+function setDockMode(mode) {
+    dockState.mode = mode;
+    dockSave();
+    applyDockMode();
+}
+
+function applyDockMode() {
+    const modal = document.getElementById('tool-modal');
+    const dialog = modal.querySelector('.tool-dialog');
+    const open = modal.classList.contains('open');
+    const mode = effectiveMode();
+    DOCK_MODES.forEach(([m]) => modal.classList.toggle('mode-' + m, m === mode));
+    modal.querySelectorAll('.dock-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === dockState.mode));
+    document.body.classList.toggle('dock-right', open && mode === 'right');
+    document.body.classList.toggle('dock-bottom', open && mode === 'bottom');
+    document.documentElement.style.setProperty('--dock-right', dockState.right + 'px');
+    document.documentElement.style.setProperty('--dock-bottom', dockState.bottom + 'px');
+    dialog.style.cssText = '';
+    if (mode === 'float') {
+        const w = Math.min(dockState.fw, window.innerWidth - 20), h = Math.min(dockState.fh, window.innerHeight - 20);
+        const x = dockState.fx == null ? window.innerWidth - w - 20 : Math.min(Math.max(0, dockState.fx), window.innerWidth - 80);
+        const y = Math.min(Math.max(0, dockState.fy), window.innerHeight - 50);
+        dialog.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
+    }
+    document.dispatchEvent(new Event('tooldock'));
+}
+
+function dockDragStart(e) {
+    if (effectiveMode() !== 'float' || e.target.closest('button')) return;
+    const dialog = document.querySelector('#tool-modal .tool-dialog');
+    const sx = e.clientX - dialog.offsetLeft, sy = e.clientY - dialog.offsetTop;
+    const move = ev => {
+        dockState.fx = Math.min(Math.max(0, ev.clientX - sx), window.innerWidth - 80);
+        dockState.fy = Math.min(Math.max(0, ev.clientY - sy), window.innerHeight - 50);
+        dialog.style.left = dockState.fx + 'px'; dialog.style.top = dockState.fy + 'px';
+    };
+    const up = () => { removeEventListener('pointermove', move); removeEventListener('pointerup', up); dockSave(); };
+    addEventListener('pointermove', move); addEventListener('pointerup', up);
+    e.preventDefault();
+}
+
+function dockResizeStart(e) {
+    const mode = effectiveMode();
+    if (mode !== 'right' && mode !== 'bottom') return;
+    const move = ev => {
+        if (mode === 'right') dockState.right = Math.min(Math.max(300, window.innerWidth - ev.clientX), window.innerWidth - 320);
+        else dockState.bottom = Math.min(Math.max(180, window.innerHeight - ev.clientY), window.innerHeight - 160);
+        document.documentElement.style.setProperty('--dock-right', dockState.right + 'px');
+        document.documentElement.style.setProperty('--dock-bottom', dockState.bottom + 'px');
+        document.dispatchEvent(new Event('tooldock'));
+    };
+    const up = () => { removeEventListener('pointermove', move); removeEventListener('pointerup', up); dockSave(); };
+    addEventListener('pointermove', move); addEventListener('pointerup', up);
+    e.preventDefault();
+}
+
+function closeTool() {
+    document.getElementById('tool-modal').classList.remove('open');
+    document.body.classList.remove('dock-right', 'dock-bottom');
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+}
+// Esc закрывает только окно по центру: закреплённый помощник не должен пропадать во время урока
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && effectiveMode() === 'modal') closeTool(); });
 
 // ---------- Таблицы ----------
 function renderTables(body, tables) {
@@ -173,59 +296,197 @@ function renderTables(body, tables) {
         </table></div>`).join('');
 }
 
-// ---------- Таблица Менделеева ----------
-const PT_CATS = {
-    nonmetal: 'Неметаллы', halogen: 'Галогены', noble: 'Инертные газы', metalloid: 'Полуметаллы',
-    alkali: 'Щелочные металлы', alkaline: 'Щёлочноземельные', transition: 'Переходные металлы',
-    post: 'Другие металлы', lanthanide: 'Лантаноиды', actinide: 'Актиноиды'
-};
+// ---------- Таблица Менделеева (как в учебнике) ----------
+// Длиннопериодная форма: 18 групп, подписи групп IA…VIIIA / IIIB…IIB, цвета блоков,
+// красная ломаная линия, лантаниды и актиниды отдельными рядами. В ячейке — номер, символ,
+// название и относительная атомная масса (поле m в periodic.json, как в таблице учебника).
+const PT_ROMAN_A = { 1: 'IA', 2: 'IIA', 13: 'IIIA', 14: 'IVA', 15: 'VA', 16: 'VIA', 17: 'VIIA', 18: 'VIIIA' };
+const PT_ROMAN_B = { 3: 'IIIB', 4: 'IVB', 5: 'VB', 6: 'VIB', 7: 'VIIB', 8: 'VIIIB', 9: 'VIIIB', 10: 'VIIIB', 11: 'IB', 12: 'IIB' };
+// Элементы выше/правее красной линии таблицы учебника
+const PT_RED = new Set(['H', 'He', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Si', 'P', 'S', 'Cl', 'Ar', 'As', 'Se', 'Br', 'Kr', 'Te', 'I', 'Xe', 'At', 'Rn', 'Og']);
+// строка сетки для каждого периода (между ними — строки с подписями групп)
+const PT_ROW = { 1: 4, 2: 6, 3: 7, 4: 9, 5: 10, 6: 11, 7: 12 };
 
-function ptPosition(n) {
-    // [строка, столбец] в сетке: строка 1 — номера групп, 2–8 — периоды 1–7, 10–11 — лантаноиды/актиноиды
-    let r, c;
-    if (n === 1) { r = 1; c = 1; }
-    else if (n === 2) { r = 1; c = 18; }
-    else if (n <= 4) { r = 2; c = n - 2; }
-    else if (n <= 10) { r = 2; c = n + 8; }
-    else if (n <= 12) { r = 3; c = n - 10; }
-    else if (n <= 18) { r = 3; c = n; }
-    else if (n <= 36) { r = 4; c = n - 18; }
-    else if (n <= 54) { r = 5; c = n - 36; }
-    else if (n <= 56) { r = 6; c = n - 54; }
-    else if (n <= 71) { r = 9; c = n - 54; }
-    else if (n <= 86) { r = 6; c = n - 68; }
-    else if (n <= 88) { r = 7; c = n - 86; }
-    else if (n <= 103) { r = 10; c = n - 86; }
-    else { r = 7; c = n - 100; }
-    return [r + 1, c];
+function ptPlace(n) {
+    let period, group, f = false;
+    if (n === 1) { period = 1; group = 1; }
+    else if (n === 2) { period = 1; group = 18; }
+    else if (n <= 10) { period = 2; group = n <= 4 ? n - 2 : n + 8; }
+    else if (n <= 18) { period = 3; group = n <= 12 ? n - 10 : n; }
+    else if (n <= 36) { period = 4; group = n - 18; }
+    else if (n <= 54) { period = 5; group = n - 36; }
+    else if (n <= 57) { period = 6; group = n - 54; }
+    else if (n <= 71) { period = 6; group = n - 54; f = true; }
+    else if (n <= 86) { period = 6; group = n - 68; }
+    else if (n <= 89) { period = 7; group = n - 86; }
+    else if (n <= 103) { period = 7; group = n - 86; f = true; }
+    else { period = 7; group = n - 100; }
+    let row, col;
+    if (f) { row = period === 6 ? 14 : 16; col = (period === 6 ? n - 58 : n - 90) + 5; }
+    else { row = PT_ROW[period]; col = group + 1; }
+    const block = f ? 'f' : (group <= 2 || n === 2) ? 's' : group >= 13 ? 'p' : 'd';
+    return { period, group: f ? 3 : group, f, row, col, block };
 }
 
-function renderPeriodic(body, els) {
-    let cells = '';
-    for (let g = 1; g <= 18; g++) cells += `<div class="pt-head" style="grid-row:1;grid-column:${g}">${g}</div>`;
-    cells += `<div class="pt-ph" style="grid-row:7;grid-column:3">57–71</div><div class="pt-ph" style="grid-row:8;grid-column:3">89–103</div>`;
-    els.forEach(e => {
-        const [r, c] = ptPosition(e.n);
-        cells += `<button class="pt-el pt-${e.cat}" style="grid-row:${r};grid-column:${c}" onclick="showElement(${e.n})">
-            <span class="pt-n">${e.n}</span><span class="pt-s">${e.s}</span><span class="pt-ar">${e.ar}</span></button>`;
-    });
-    const legend = Object.entries(PT_CATS).map(([k, v]) => `<span class="pt-leg"><i class="pt-sw pt-${k}"></i>${v}</span>`).join('');
-    body.innerHTML = `
-        <div class="pt-info" id="pt-info">Нажмите на элемент, чтобы увидеть подробности</div>
-        <div class="tool-scroll"><div class="pt-grid">${cells}</div></div>
-        <div class="pt-legend">${legend}</div>
-        <p class="tool-note">В ячейке: номер элемента, символ, относительная атомная масса (в скобках — массовое число наиболее устойчивого изотопа). Значения округлены, как в школьных таблицах.</p>`;
+function ptGroupLabel(pl) {
+    if (pl.f) return `${pl.period === 6 ? 'лантаниды' : 'актиниды'} (группа 3, ${PT_ROMAN_B[3]})`;
+    return `группа ${pl.group} (${PT_ROMAN_A[pl.group] || PT_ROMAN_B[pl.group]})`;
+}
+
+function ptRedEdges(e, byPos) {
+    if (!PT_RED.has(e.s)) return '';
+    const pl = ptPlace(e.n);
+    if (e.s === 'H') return 'pt-red-t pt-red-r pt-red-b pt-red-l';
+    const nb = (dr, dg) => byPos[`${pl.period + dr}:${pl.group + dg}`];
+    const cls = [];
+    const isMetal = x => x && !PT_RED.has(x.s);
+    if (isMetal(nb(0, -1)) || (!nb(0, -1) && pl.group === 13)) cls.push('pt-red-l');
+    if (isMetal(nb(1, 0)) || (pl.period === 7)) cls.push('pt-red-b');
+    if (isMetal(nb(-1, 0))) cls.push('pt-red-t');
+    return cls.join(' ');
+}
+
+function renderPeriodic(body, els, ctx) {
     window._ptEls = els;
+    window._mrEls = window._mrEls || {};
+    els.forEach(e => { window._mrEls[e.s] = parseFloat(String(e.ar).replace(/[\[\]]/g, '')); });
+    window._valEls = window._valEls || els;
+    window._ptCtx = ctx;
+    const byPos = {};
+    els.forEach(e => { const pl = ptPlace(e.n); if (!pl.f) byPos[`${pl.period}:${pl.group}`] = e; });
+
+    let cells = '<div class="pt-corner" style="grid-row:1/3;grid-column:1">периоды</div>';
+    cells += '<div class="pt-groups-title" style="grid-row:1;grid-column:2/20">группы элементов</div>';
+    for (let g = 1; g <= 18; g++) cells += `<div class="pt-gnum" style="grid-row:2;grid-column:${g + 1}">${g}</div>`;
+    // подписи групп: IA и VIIIA над 1-м периодом, IIA и IIIA…VIIA над 2-м, побочные — над 4-м
+    const lab = (row, col, text, span) => `<div class="pt-roman" style="grid-row:${row};grid-column:${col}${span ? ' / span ' + span : ''}">${text}</div>`;
+    cells += lab(PT_ROW[1] - 1, 2, 'IA') + lab(PT_ROW[1] - 1, 19, 'VIIIA') + lab(PT_ROW[2] - 1, 3, 'IIA');
+    for (let g = 13; g <= 17; g++) cells += lab(PT_ROW[2] - 1, g + 1, PT_ROMAN_A[g]);
+    for (let g = 3; g <= 7; g++) cells += lab(PT_ROW[4] - 1, g + 1, PT_ROMAN_B[g]);
+    cells += lab(PT_ROW[4] - 1, 9, 'VIIIB', 3) + lab(PT_ROW[4] - 1, 12, 'IB') + lab(PT_ROW[4] - 1, 13, 'IIB');
+    for (let p = 1; p <= 7; p++) cells += `<div class="pt-period" style="grid-row:${PT_ROW[p]};grid-column:1">${p}</div>`;
+    cells += `<div class="pt-fam" style="grid-row:13;grid-column:5/19">Лантаниды</div><div class="pt-fam" style="grid-row:15;grid-column:5/19">Актиниды</div>`;
+    els.forEach(e => {
+        const pl = ptPlace(e.n);
+        const mark = (e.n === 57 || e.n === 89) ? '<i class="pt-dot"></i>' : '';
+        cells += `<button class="pt-cell pt-${pl.block} ${ptRedEdges(e, byPos)}" style="grid-row:${pl.row};grid-column:${pl.col}" data-s="${e.s}" onclick="showElement(${e.n})">
+            <span class="pt-num">${e.n}</span><span class="pt-sym">${e.s}</span><span class="pt-name">${toolEsc(e.name)}</span><span class="pt-mass">${toolEsc(e.m || e.ar)}</span>${mark}</button>`;
+    });
+    cells += `<div class="pt-info" id="pt-info" style="grid-row:4/8;grid-column:4/14"></div>`;
+
+    const ctxEls = ctx ? [...ctx.elements] : [];
+    body.innerHTML = `
+        <div class="pt-toolbar">
+            ${ctxEls.length ? `<button class="mode-btn" id="pt-hl-btn" onclick="ptToggleHighlight()">📖 Элементы ${toolEsc(ctx.label)} (${ctxEls.length})</button>` : ''}
+            <span class="tool-note" style="margin:0">Нажмите на элемент — появятся сведения и валентность.</span>
+        </div>
+        <div class="pt-fit" id="pt-fit"><div class="pt-table" id="pt-table">${cells}</div></div>
+        <div class="pt-info-out" id="pt-info-out"></div>`;
+    showElement(null);
+    ptFit();
+    if (!window._ptFitBound) {
+        window._ptFitBound = true;
+        window.addEventListener('resize', ptFit);
+        document.addEventListener('tooldock', ptFit);
+        if (window.ResizeObserver) new ResizeObserver(ptFit).observe(document.getElementById('tool-body'));
+    }
+    ptBuildValenceIndex();
+}
+
+// Масштаб таблицы под ширину окна помощника; на совсем узкой панели — прокрутка
+function ptFit() {
+    const fit = document.getElementById('pt-fit'), table = document.getElementById('pt-table');
+    if (!fit || !table) return;
+    table.style.zoom = 1;
+    let k = (fit.clientWidth - 2) / table.scrollWidth;
+    // в окне по центру и в плавающем окне — вписываем ещё и по высоте; у закреплённых панелей высота прокручивается
+    const mode = effectiveMode();
+    if (mode === 'modal' || mode === 'float') {
+        const body = document.getElementById('tool-body');
+        const availH = body.getBoundingClientRect().bottom - fit.getBoundingClientRect().top - 20;
+        if (availH > 150) k = Math.min(k, availH / table.scrollHeight);
+    }
+    const zoom = Math.max(0.45, Math.min(1, k));
+    table.style.zoom = zoom;
+    // таблица сильно уменьшена — сведения об элементе показываем под ней в обычном размере
+    document.getElementById('tool-body').classList.toggle('pt-compact', zoom < 0.72);
+}
+
+function ptToggleHighlight() {
+    const t = document.getElementById('pt-table'), btn = document.getElementById('pt-hl-btn');
+    const on = !t.classList.contains('pt-hl');
+    t.classList.toggle('pt-hl', on);
+    btn.classList.toggle('active', on);
+    const set = window._ptCtx ? window._ptCtx.elements : new Set();
+    t.querySelectorAll('.pt-cell').forEach(c => c.classList.toggle('pt-ctx', set.has(c.dataset.s)));
+}
+
+// Индекс «элемент → формулы из учебника с определённой валентностью» по всем параграфам предмета
+async function ptBuildValenceIndex() {
+    if (window._ptValIndex || typeof topicList === 'undefined') return;
+    const symbols = new Set((window._ptEls || []).map(e => e.s));
+    const index = {};
+    const results = await Promise.all(topicList.map(t =>
+        fetch(`data/${subject.id}/p${t.p}.json`).then(r => r.ok ? r.json() : null).then(d => [t, d]).catch(() => [t, null])));
+    results.forEach(([t, d]) => {
+        if (!d) return;
+        const own = (d.toolContext && (d.toolContext.valence || d.toolContext['valence-calc'])) || {};
+        const formulas = [...new Set([...(own.formulas || []).map(toDigits), ...extractFormulas(paragraphText(d), symbols)])];
+        formulas.forEach(f => {
+            const r = valSolveTextbook(f);
+            if (!r) return;
+            [[r.a, r.va], [r.b, r.vb]].forEach(([el, v]) => {
+                const list = index[el] = index[el] || [];
+                let item = list.find(x => x.f === f);
+                if (!item) list.push(item = { f, v, paras: [] });
+                if (!item.paras.includes(t.num)) item.paras.push(t.num);
+            });
+        });
+    });
+    window._ptValIndex = index;
+    if (window._ptSelected) showElement(window._ptSelected);
 }
 
 function showElement(n) {
+    const inGrid = document.getElementById('pt-info'), below = document.getElementById('pt-info-out');
+    if (!inGrid) return;
+    const box = { set innerHTML(html) { inGrid.innerHTML = html; if (below) below.innerHTML = html; } };
+    window._ptSelected = n;
+    document.querySelectorAll('.pt-cell.sel').forEach(c => c.classList.remove('sel'));
+    if (!n) {
+        const ca = window._ptEls.find(x => x.n === 20);
+        box.innerHTML = `<div class="pt-legend-box">
+            <div class="pt-legend-labels"><span>Атомный номер →</span><span>Символ элемента →</span><span>Название элемента →</span><span>Относительная атомная масса →</span></div>
+            <div class="pt-bigcell pt-s"><span class="pt-num">${ca.n}</span><span class="pt-sym">${ca.s}</span><span class="pt-name">${ca.name}</span><span class="pt-mass">${ca.m}</span></div></div>`;
+        return;
+    }
     const e = window._ptEls.find(x => x.n === n);
-    const [row, col] = ptPosition(n);
-    let place;
-    if (e.cat === 'lanthanide' || e.cat === 'actinide') place = `${e.cat === 'lanthanide' ? 'лантаноиды' : 'актиноиды'}, период ${e.cat === 'lanthanide' ? 6 : 7}`;
-    else place = `период ${row - 1}, группа ${col}`;
-    document.getElementById('pt-info').innerHTML =
-        `<strong class="pt-big">${e.s}</strong> — <strong>${e.name}</strong> · № ${e.n} · Ar = ${e.ar} · ${place} · ${PT_CATS[e.cat].toLowerCase()}`;
+    const pl = ptPlace(n);
+    document.querySelector(`.pt-cell[data-s="${e.s}"]`)?.classList.add('sel');
+    let val;
+    if (e.s in VAL_CONST) val = `Постоянная валентность: <b>${valRoman(VAL_CONST[e.s])}</b>`;
+    else if (e.s in VAL_VAR) val = `Переменная валентность: <b>${VAL_VAR[e.s].map(valRoman).join(', ')}</b>`;
+    else val = '<span class="pt-muted">В таблице постоянной и переменной валентности (§ 9) элемента нет.</span>';
+    const idx = window._ptValIndex;
+    let ex = '';
+    if (!idx) ex = '<div class="pt-muted">Ищу формулы в параграфах…</div>';
+    else if (idx[e.s] && idx[e.s].length) ex = `<div class="pt-ex-title">В формулах учебника:</div><div class="pt-ex">${idx[e.s].map(x =>
+        `<span class="pt-chip" title="${x.paras.join(', ')}">${toSubs(x.f)} — ${valRoman(x.v)} <small>${x.paras.join(', ')}</small></span>`).join('')}</div>`;
+    const ctx = window._ptCtx;
+    let here = '';
+    if (ctx && ctx.elements.has(e.s)) {
+        const fs = ctx.formulas.filter(f => (f.match(/[A-Z][a-z]?/g) || []).includes(e.s));
+        here = `<div class="pt-here">📖 Есть в ${toolEsc(ctx.label)}${fs.length ? ': ' + fs.map(toSubs).join(', ') : ''}</div>`;
+    }
+    box.innerHTML = `<div class="pt-detail">
+        <div class="pt-bigcell pt-${pl.block}"><span class="pt-num">${e.n}</span><span class="pt-sym">${e.s}</span><span class="pt-name">${toolEsc(e.name)}</span><span class="pt-mass">${toolEsc(e.m || e.ar)}</span></div>
+        <div class="pt-detail-text">
+            <div class="pt-title">${toolEsc(e.name)} <span class="pt-muted">· № ${e.n}</span></div>
+            <div>Период ${pl.period}, ${ptGroupLabel(pl)}</div>
+            <div>Ar = ${toolEsc(e.m || e.ar)}${e.ar !== e.m && !/\[/.test(e.ar) ? ` <span class="pt-muted">(в расчётах ${e.ar})</span>` : ''}</div>
+            <div class="pt-val">${val}</div>
+            ${ex}${here}
+        </div></div>`;
 }
 
 // ---------- Калькулятор Mr ----------
@@ -335,12 +596,9 @@ function renderValenceCalc(body, els, ctx) {
     if (ctx) {
         ctx.pairs.forEach(p => addPair(...p));
         ctx.formulas.forEach(f => {
-            try {
-                const r = valSolve(f);
-                // только значения, которые встречаются в учебнике (SO₄ как группа даст S(VIII) — отбрасываем)
-                if (r.x > 7 || (r.unk in VAL_VAR && !VAL_VAR[r.unk].includes(r.x))) return;
-                ctxF.push(f); addPair(r.a, r.va, r.b, r.vb);
-            } catch (e) { /* не бинарная или без постоянной валентности */ }
+            // только значения, которые согласуются с учебником (SO₄ как группа дала бы S(VIII) — отбрасываем)
+            const r = valSolveTextbook(f);
+            if (r) { ctxF.push(f); addPair(r.a, r.va, r.b, r.vb); }
         });
     }
     const p0 = ctxP[0] || ['Fe', 3, 'O', 2];
@@ -432,6 +690,15 @@ function valSolve(raw) {
     r.vb = unk === b ? x : kv;
     if (!valid) { const e = new Error('Валентность определить нельзя'); e.result = r; throw e; }
     return r;
+}
+
+// Валентность по формуле, только если значение согласуется с учебником (иначе null)
+function valSolveTextbook(f) {
+    try {
+        const r = valSolve(f);
+        if (r.x > 7 || (r.unk in VAL_VAR && !VAL_VAR[r.unk].includes(r.x))) return null;
+        return r;
+    } catch (e) { return null; }
 }
 
 function calcValence() {
