@@ -854,3 +854,8 @@ p.subtitle {
 .val-cell { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.05; }
 .val-cell i { font-style: normal; font-size: 0.85rem; color: var(--primary); font-weight: 700; }
 .val-step { font-size: 0.95rem; margin: 3px 0; }
+
+/* Контекст открытого параграфа в помощниках */
+.ctx-box { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; background: var(--subject-soft, #f1f5f9); }
+.ctx-label { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-right: 2px; }
+.ctx-chip { border-color: var(--primary); }

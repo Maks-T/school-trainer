@@ -1,6 +1,7 @@
 // Инструменты-помощники предмета (кнопки в шапке тренажёра).
 // Описываются в data/subjects.json → subject.tools:
 //   { "id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json" }
+// Помощники получают контекст открытого параграфа — см. getToolContext() и поле toolContext в JSON параграфа.
 // Типы: "periodic" — таблица Менделеева, "mr-calc" — калькулятор Mr, "valence-calc" — калькулятор валентности,
 //       "tables" — набор таблиц (data: {tables:[{title, columns, rows}]}), "image" — картинка (src), "html" — готовый HTML (html).
 
@@ -39,17 +40,124 @@ async function openTool(i) {
     body.innerHTML = '<p class="tool-note">Загрузка…</p>';
     modal.classList.add('open');
     try {
-        const data = await loadToolData(tool);
-        if (tool.type === 'periodic') renderPeriodic(body, data.elements);
-        else if (tool.type === 'mr-calc') renderMrCalc(body, data.elements);
-        else if (tool.type === 'valence-calc') renderValenceCalc(body, data.elements);
-        else if (tool.type === 'tables') renderTables(body, data.tables);
+        const tdata = await loadToolData(tool);
+        const ctx = tdata && tdata.elements ? getToolContext(tool, tdata.elements) : null;
+        if (tool.type === 'periodic') renderPeriodic(body, tdata.elements);
+        else if (tool.type === 'mr-calc') renderMrCalc(body, tdata.elements, ctx);
+        else if (tool.type === 'valence-calc') renderValenceCalc(body, tdata.elements, ctx);
+        else if (tool.type === 'tables') renderTables(body, tdata.tables);
         else if (tool.type === 'image') body.innerHTML = `<img class="tool-img" src="data/${subject.id}/${toolEsc(tool.src)}" alt="${toolEsc(tool.title)}">`;
         else if (tool.type === 'html') body.innerHTML = tool.html || '';
         else body.innerHTML = '<p class="tool-note">Неизвестный тип инструмента</p>';
     } catch (err) {
         body.innerHTML = `<p class="tool-note">Не удалось загрузить: ${toolEsc(err.message)}</p>`;
     }
+}
+
+// ---------- Контекст открытого параграфа ----------
+// Помощник получает формулы из открытого параграфа (переменная data из app.js):
+//   1) вручную — data.toolContext[<id или type инструмента>] = { formulas: [...], pairs: [["Fe",3,"O",2]], auto: true }
+//   2) автоматически — все химические формулы из текста, карточек, хронографа и теста (если auto !== false).
+const SUB_DIGITS = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+const ROMAN_GROUP = /\((?:VIII|VII|VI|IV|V|III|II|I)\)/g;
+
+function toDigits(str) { return String(str).replace(/[₀-₉]/g, ch => SUB_DIGITS[ch]).replace(/\s+/g, ''); }
+function toSubs(str) { return String(str).replace(/\d/g, d => '₀₁₂₃₄₅₆₇₈₉'[d]); }
+
+function paragraphLabel() {
+    const t = (typeof topicList !== 'undefined' && topicList[topicIndex]) || null;
+    return t ? t.num : 'параграфа';
+}
+
+function paragraphText() {
+    if (typeof data === 'undefined' || !data) return '';
+    const parts = [data.title, data.subtitle];
+    (data.sections || []).forEach(s => {
+        parts.push(s.title, s.text, ...(s.chain || []));
+        (s.images || []).forEach(i => parts.push(i.caption));
+    });
+    (data.flashcards || []).forEach(c => parts.push(c.q, c.a));
+    (data.timeline || []).forEach(t => parts.push(t.date, t.title, t.text));
+    // из теста — только вопрос и правильный ответ: неверные варианты часто содержат ошибочные формулы
+    (data.quiz || []).forEach(q => parts.push(q.q, (q.opts || [])[q.correct]));
+    return parts.filter(Boolean).join('\n').replace(/[{}]/g, '');
+}
+
+// Разбор формулы без скобок-валентностей: { counts, distinct, maxIndex } или null
+function formulaInfo(norm, symbols) {
+    if (!/^[A-Z(][A-Za-z0-9()]*$/.test(norm)) return null;
+    let pos = 0, maxIndex = 1;
+    const counts = {};
+    function num() { const m = /^\d+/.exec(norm.slice(pos)); if (m) { pos += m[0].length; return +m[0]; } return 1; }
+    function group(closing) {
+        const c = {};
+        while (pos < norm.length) {
+            const ch = norm[pos];
+            if (ch === '(') {
+                pos++;
+                const inner = group(true); if (!inner) return null;
+                const k = num(); maxIndex = Math.max(maxIndex, k);
+                for (const el in inner) c[el] = (c[el] || 0) + inner[el] * k;
+            } else if (ch === ')') {
+                if (!closing) return null;
+                pos++; return c;
+            } else {
+                const m = /^[A-Z][a-z]?/.exec(norm.slice(pos));
+                if (!m || !symbols.has(m[0])) return null;
+                pos += m[0].length;
+                const k = num(); maxIndex = Math.max(maxIndex, k);
+                c[m[0]] = (c[m[0]] || 0) + k;
+            }
+        }
+        return closing ? null : c;
+    }
+    const res = group(false);
+    if (!res) return null;
+    Object.assign(counts, res);
+    return { counts, distinct: Object.keys(counts).length, maxIndex };
+}
+
+function closingParen(str, open) {
+    let depth = 0;
+    for (let i = open; i < str.length; i++) {
+        if (str[i] === '(') depth++;
+        else if (str[i] === ')' && --depth === 0) return i;
+    }
+    return -1;
+}
+
+function extractFormulas(text, symbols) {
+    const found = [], seen = new Set();
+    const re = /(?<![A-Za-z0-9])[A-Z(][A-Za-z0-9₀-₉()]*/g;
+    let m;
+    while ((m = re.exec(text))) {
+        let tok = toDigits(m[0]);
+        if (ROMAN_GROUP.test(tok)) { ROMAN_GROUP.lastIndex = 0; continue; } // P(V)O(II), Fe(III) — запись валентности
+        tok = tok.replace(/^(?:Ar|Mr)\(/, '(');
+        while (tok.endsWith(')') && (tok.match(/\(/g) || []).length < (tok.match(/\)/g) || []).length) tok = tok.slice(0, -1);
+        if (tok.startsWith('(') && closingParen(tok, 0) === tok.length - 1) tok = tok.slice(1, -1);
+        if (!tok || /^[IVX]+$/.test(tok) || seen.has(tok)) continue;
+        const info = formulaInfo(tok, symbols);
+        if (!info) continue;
+        if (info.distinct < 2 && info.maxIndex < 2) continue; // одиночный символ — не формула
+        seen.add(tok);
+        found.push(tok);
+    }
+    return found;
+}
+
+function getToolContext(tool, els) {
+    const symbols = new Set(els.map(e => e.s));
+    const all = (typeof data !== 'undefined' && data && data.toolContext) || {};
+    const own = all[tool.id] || all[tool.type] || {};
+    const manual = (own.formulas || []).map(toDigits).filter(f => formulaInfo(f, symbols));
+    const auto = own.auto === false ? [] : extractFormulas(paragraphText(), symbols);
+    const formulas = [...new Set([...manual, ...auto])];
+    return { label: paragraphLabel(), formulas, pairs: own.pairs || [] };
+}
+
+function ctxChips(list, onclickFn) {
+    return list.map(f => `<button class="mode-btn ctx-chip" onclick="${onclickFn}('${f}')">${toSubs(f)}</button>`).join('');
 }
 
 function closeTool() { document.getElementById('tool-modal').classList.remove('open'); }
@@ -121,19 +229,23 @@ function showElement(n) {
 }
 
 // ---------- Калькулятор Mr ----------
-function renderMrCalc(body, els) {
+function renderMrCalc(body, els, ctx) {
     window._mrEls = {};
     els.forEach(e => { window._mrEls[e.s] = parseFloat(String(e.ar).replace(/[\[\]]/g, '')); });
+    const own = ctx ? ctx.formulas : [];
     body.innerHTML = `
         <p class="tool-note" style="margin-top:0">Введите химическую формулу (регистр важен: Co — кобальт, CO — углекислый/угарный газ). Скобки и индексы поддерживаются.</p>
         <div class="mr-row">
-            <input id="mr-input" class="mr-input" type="text" value="Al2(SO4)3" autocomplete="off" spellcheck="false" oninput="calcMr()">
-            <div class="mr-quick">${['H2O', 'H2SO4', 'CaCO3', 'Al2(SO4)3', 'C6H12O6', 'Ca3(PO4)2'].map(f =>
+            <input id="mr-input" class="mr-input" type="text" value="${own[0] || 'Al2(SO4)3'}" autocomplete="off" spellcheck="false" oninput="calcMr()">
+            ${own.length ? `<div class="ctx-box"><span class="ctx-label">📖 Из ${toolEsc(ctx.label)}:</span>${ctxChips(own, 'mrPick')}</div>` : ''}
+            <div class="mr-quick">${own.length ? '<span class="ctx-label">Примеры:</span>' : ''}${['H2O', 'H2SO4', 'CaCO3', 'Al2(SO4)3', 'C6H12O6', 'Ca3(PO4)2'].map(f =>
                 `<button class="mode-btn" onclick="document.getElementById('mr-input').value='${f}';calcMr()">${f}</button>`).join('')}</div>
         </div>
         <div id="mr-out" class="mr-out"></div>`;
     calcMr();
 }
+
+function mrPick(f) { document.getElementById('mr-input').value = f; calcMr(); }
 
 function parseFormula(str) {
     const SUB = { '₀': 0, '₁': 1, '₂': 2, '₃': 3, '₄': 4, '₅': 5, '₆': 6, '₇': 7, '₈': 8, '₉': 9 };
@@ -210,10 +322,28 @@ function valHint(s) {
     return '';
 }
 
-function renderValenceCalc(body, els) {
+function renderValenceCalc(body, els, ctx) {
     window._mrEls = window._mrEls || {};
     els.forEach(e => { window._mrEls[e.s] = parseFloat(String(e.ar).replace(/[\[\]]/g, '')); });
     window._valEls = els;
+    // Контекст: бинарные формулы параграфа, где валентность можно определить, и пары элементов
+    const ctxF = [], ctxP = [], pKeys = new Set();
+    const addPair = (a, av, b, bv) => {
+        const k = `${a}${av}${b}${bv}`;
+        if (!pKeys.has(k)) { pKeys.add(k); ctxP.push([a, +av, b, +bv]); }
+    };
+    if (ctx) {
+        ctx.pairs.forEach(p => addPair(...p));
+        ctx.formulas.forEach(f => {
+            try {
+                const r = valSolve(f);
+                // только значения, которые встречаются в учебнике (SO₄ как группа даст S(VIII) — отбрасываем)
+                if (r.x > 7 || (r.unk in VAL_VAR && !VAL_VAR[r.unk].includes(r.x))) return;
+                ctxF.push(f); addPair(r.a, r.va, r.b, r.vb);
+            } catch (e) { /* не бинарная или без постоянной валентности */ }
+        });
+    }
+    const p0 = ctxP[0] || ['Fe', 3, 'O', 2];
     const opts = sel => ROMAN.slice(1).map((r, i) => `<option value="${i + 1}"${i + 1 === sel ? ' selected' : ''}>${r}</option>`).join('');
     body.innerHTML = `
         <div class="val-tabs">
@@ -223,8 +353,9 @@ function renderValenceCalc(body, els) {
         <div id="val-pane-1">
             <p class="tool-note" style="margin-top:0">Введите формулу бинарного соединения (из двух элементов). Один из элементов должен иметь постоянную валентность: H, Ag, Na, K (I); O, Mg, Ca, Zn (II); Al (III).</p>
             <div class="mr-row">
-                <input id="val-input" class="mr-input" type="text" value="Fe2O3" autocomplete="off" spellcheck="false" oninput="calcValence()">
-                <div class="mr-quick">${['SO3', 'SO2', 'NH3', 'CH4', 'Fe2O3', 'P2O5', 'Cl2O7', 'CaCl2', 'Na2S'].map(f =>
+                <input id="val-input" class="mr-input" type="text" value="${ctxF[0] || 'Fe2O3'}" autocomplete="off" spellcheck="false" oninput="calcValence()">
+                ${ctxF.length ? `<div class="ctx-box"><span class="ctx-label">📖 Из ${toolEsc(ctx.label)}:</span>${ctxChips(ctxF, 'valPick')}</div>` : ''}
+                <div class="mr-quick">${ctxF.length ? '<span class="ctx-label">Примеры:</span>' : ''}${['SO3', 'SO2', 'NH3', 'CH4', 'Fe2O3', 'P2O5', 'Cl2O7', 'CaCl2', 'Na2S'].map(f =>
                     `<button class="mode-btn" onclick="document.getElementById('val-input').value='${f}';calcValence()">${f}</button>`).join('')}</div>
             </div>
             <div id="val-out" class="mr-out"></div>
@@ -232,13 +363,15 @@ function renderValenceCalc(body, els) {
         <div id="val-pane-2" style="display:none">
             <p class="tool-note" style="margin-top:0">Введите символы двух элементов и их валентности. Для элементов с постоянной валентностью она подставится сама.</p>
             <div class="val-pair">
-                <input id="val-a" class="mr-input val-el" type="text" value="Fe" autocomplete="off" spellcheck="false" oninput="valAuto('a');buildFormula()">
-                <select id="val-av" class="val-sel" onchange="buildFormula()">${opts(3)}</select>
+                <input id="val-a" class="mr-input val-el" type="text" value="${p0[0]}" autocomplete="off" spellcheck="false" oninput="valAuto('a');buildFormula()">
+                <select id="val-av" class="val-sel" onchange="buildFormula()">${opts(p0[1])}</select>
                 <span class="val-plus">+</span>
-                <input id="val-b" class="mr-input val-el" type="text" value="O" autocomplete="off" spellcheck="false" oninput="valAuto('b');buildFormula()">
-                <select id="val-bv" class="val-sel" onchange="buildFormula()">${opts(2)}</select>
+                <input id="val-b" class="mr-input val-el" type="text" value="${p0[2]}" autocomplete="off" spellcheck="false" oninput="valAuto('b');buildFormula()">
+                <select id="val-bv" class="val-sel" onchange="buildFormula()">${opts(p0[3])}</select>
             </div>
-            <div class="mr-quick" style="margin:8px 0 12px">${[['N', 3, 'O', 2], ['P', 5, 'O', 2], ['C', 4, 'O', 2], ['Al', 3, 'O', 2], ['Fe', 3, 'S', 2], ['Mg', 2, 'P', 3], ['Cu', 1, 'O', 2]].map(([a, av, b, bv]) =>
+            ${ctxP.length ? `<div class="ctx-box" style="margin-top:8px"><span class="ctx-label">📖 Из ${toolEsc(ctx.label)}:</span>${ctxP.map(([a, av, b, bv]) =>
+                `<button class="mode-btn ctx-chip" onclick="valSet('${a}',${av},'${b}',${bv})">${a}(${valRoman(av)}) + ${b}(${valRoman(bv)})</button>`).join('')}</div>` : ''}
+            <div class="mr-quick" style="margin:8px 0 12px">${ctxP.length ? '<span class="ctx-label">Примеры:</span>' : ''}${[['N', 3, 'O', 2], ['P', 5, 'O', 2], ['C', 4, 'O', 2], ['Al', 3, 'O', 2], ['Fe', 3, 'S', 2], ['Mg', 2, 'P', 3], ['Cu', 1, 'O', 2]].map(([a, av, b, bv]) =>
                 `<button class="mode-btn" onclick="valSet('${a}',${av},'${b}',${bv})">${a}(${valRoman(av)}) + ${b}(${valRoman(bv)})</button>`).join('')}</div>
             <div id="val-out2" class="mr-out"></div>
         </div>
@@ -246,6 +379,8 @@ function renderValenceCalc(body, els) {
     calcValence();
     buildFormula();
 }
+
+function valPick(f) { document.getElementById('val-input').value = f; calcValence(); }
 
 function valTab(n) {
     [1, 2].forEach(i => {
@@ -267,50 +402,63 @@ function valAuto(side) {
         document.getElementById(`val-${side}v`).value = VAL_VAR[s][0];
 }
 
+// Чистый расчёт: валентность по формуле бинарного соединения. Бросает Error, если определить нельзя.
+function valSolve(raw) {
+    raw = String(raw).trim();
+    if (/[()]/.test(raw)) throw new Error('Скобки не поддерживаются: введите бинарное соединение, например Fe2O3');
+    const s = toDigits(raw);
+    const order = [], idx = {};
+    const re = /([A-Z][a-z]?)(\d*)/g;
+    let m, consumed = '';
+    while ((m = re.exec(s)) && m[0]) {
+        const el = m[1];
+        if (!(el in window._mrEls)) throw new Error(`Нет элемента «${el}»`);
+        if (!(el in idx)) order.push(el);
+        idx[el] = (idx[el] || 0) + (m[2] ? parseInt(m[2], 10) : 1);
+        consumed += m[0];
+    }
+    if (!s) throw new Error('Введите формулу');
+    if (consumed !== s) throw new Error('Непонятная запись формулы');
+    if (order.length !== 2) throw new Error('Нужно бинарное соединение — ровно два элемента');
+    const [a, b] = order;
+    const knownEl = b in VAL_CONST ? b : a in VAL_CONST ? a : null;
+    if (!knownEl) throw new Error(`Ни у ${a}, ни у ${b} нет постоянной валентности — по этой формуле валентность не определить`);
+    const unk = knownEl === a ? b : a;
+    const kv = VAL_CONST[knownEl], total = kv * idx[knownEl];
+    const x = total / idx[unk];
+    const valid = Number.isInteger(x) && x >= 1 && x <= 8 && !(unk in VAL_CONST && VAL_CONST[unk] !== x);
+    const r = { a, b, idx, knownEl, unk, kv, total, x, valid };
+    r.va = unk === a ? x : kv;
+    r.vb = unk === b ? x : kv;
+    if (!valid) { const e = new Error('Валентность определить нельзя'); e.result = r; throw e; }
+    return r;
+}
+
 function calcValence() {
     const out = document.getElementById('val-out');
     const raw = document.getElementById('val-input').value.trim();
+    let r;
     try {
-        if (/[()]/.test(raw)) throw new Error('Скобки не поддерживаются: введите бинарное соединение, например Fe2O3');
-        const SUB = { '₀': 0, '₁': 1, '₂': 2, '₃': 3, '₄': 4, '₅': 5, '₆': 6, '₇': 7, '₈': 8, '₉': 9 };
-        const s = raw.replace(/\s+/g, '').replace(/[₀-₉]/g, ch => SUB[ch]);
-        const order = [], idx = {};
-        const re = /([A-Z][a-z]?)(\d*)/g;
-        let m, consumed = '';
-        while ((m = re.exec(s)) && m[0]) {
-            const el = m[1];
-            if (!(el in window._mrEls)) throw new Error(`Нет элемента «${el}»`);
-            if (!(el in idx)) order.push(el);
-            idx[el] = (idx[el] || 0) + (m[2] ? parseInt(m[2], 10) : 1);
-            consumed += m[0];
-        }
-        if (!s) throw new Error('Введите формулу');
-        if (consumed !== s) throw new Error('Непонятная запись формулы');
-        if (order.length !== 2) throw new Error('Нужно бинарное соединение — ровно два элемента');
-        const [a, b] = order;
-        const knownEl = b in VAL_CONST ? b : a in VAL_CONST ? a : null;
-        if (!knownEl) throw new Error(`Ни у ${a}, ни у ${b} нет постоянной валентности — по этой формуле валентность не определить`);
-        const unk = knownEl === a ? b : a;
-        const kv = VAL_CONST[knownEl], total = kv * idx[knownEl];
-        const x = total / idx[unk];
-        const fml = `${a}${valSub(idx[a])}${b}${valSub(idx[b])}`;
-        let steps = `<div class="val-step">1) ${knownEl} — ${valName(knownEl)}, постоянная валентность <b>${valRoman(kv)}</b></div>
-            <div class="val-step">2) Общее число единиц валентности ${knownEl}: ${valRoman(kv)} · ${idx[knownEl]} = <b>${total}</b></div>
-            <div class="val-step">3) Столько же единиц у ${unk}: x · ${idx[unk]} = ${total}, x = ${total} : ${idx[unk]} = <b>${Number.isInteger(x) ? x : x.toFixed(2)}</b></div>`;
-        if (!Number.isInteger(x) || x < 1 || x > 8) {
-            out.innerHTML = steps + `<div class="mr-error">Валентность получилась не целым числом — проверьте формулу.</div>`;
-            return;
-        }
-        let note = '';
-        if (unk in VAL_CONST && VAL_CONST[unk] !== x) note = `<div class="mr-error">У ${unk} постоянная валентность ${valRoman(VAL_CONST[unk])} — такая формула неверна.</div>`;
-        else if (unk in VAL_VAR && !VAL_VAR[unk].includes(x)) note = `<div class="tool-note">В учебнике для ${unk} указаны значения ${VAL_VAR[unk].map(valRoman).join(', ')}.</div>`;
-        else if (valHint(unk)) note = `<div class="tool-note">${unk}: ${valHint(unk)}.</div>`;
-        const ra = unk === a ? valRoman(x) : valRoman(kv), rb = unk === b ? valRoman(x) : valRoman(kv);
-        out.innerHTML = `<div class="val-formula"><span class="val-cell"><i>${ra}</i>${a}${valSub(idx[a])}</span><span class="val-cell"><i>${rb}</i>${b}${valSub(idx[b])}</span></div>
-            <div class="mr-result">Валентность ${unk} (${valName(unk)}) в ${fml} = <strong>${valRoman(x)}</strong></div>${steps}${note}`;
+        r = valSolve(raw);
     } catch (err) {
-        out.innerHTML = `<div class="mr-error">${toolEsc(err.message)}</div>`;
+        if (!err.result) { out.innerHTML = `<div class="mr-error">${toolEsc(err.message)}</div>`; return; }
+        r = err.result;
     }
+    const { a, b, idx, knownEl, unk, kv, total, x } = r;
+    const fml = `${a}${valSub(idx[a])}${b}${valSub(idx[b])}`;
+    const steps = `<div class="val-step">1) ${knownEl} — ${valName(knownEl)}, постоянная валентность <b>${valRoman(kv)}</b></div>
+        <div class="val-step">2) Общее число единиц валентности ${knownEl}: ${valRoman(kv)} · ${idx[knownEl]} = <b>${total}</b></div>
+        <div class="val-step">3) Столько же единиц у ${unk}: x · ${idx[unk]} = ${total}, x = ${total} : ${idx[unk]} = <b>${Number.isInteger(x) ? x : x.toFixed(2)}</b></div>`;
+    if (!Number.isInteger(x) || x < 1 || x > 8) {
+        out.innerHTML = steps + `<div class="mr-error">Валентность получилась не целым числом — проверьте формулу.</div>`;
+        return;
+    }
+    let note = '';
+    if (unk in VAL_CONST && VAL_CONST[unk] !== x) note = `<div class="mr-error">У ${unk} постоянная валентность ${valRoman(VAL_CONST[unk])} — такая формула неверна.</div>`;
+    else if (unk in VAL_VAR && !VAL_VAR[unk].includes(x)) note = `<div class="tool-note">В учебнике для ${unk} указаны значения ${VAL_VAR[unk].map(valRoman).join(', ')}.</div>`;
+    else if (valHint(unk)) note = `<div class="tool-note">${unk}: ${valHint(unk)}.</div>`;
+    out.innerHTML = `<div class="val-formula"><span class="val-cell"><i>${valRoman(r.va)}</i>${a}${valSub(idx[a])}</span><span class="val-cell"><i>${valRoman(r.vb)}</i>${b}${valSub(idx[b])}</span></div>
+        <div class="mr-result">Валентность ${unk} (${valName(unk)}) в ${fml} = <strong>${valRoman(x)}</strong></div>${steps}${note}`;
 }
 
 function buildFormula() {
