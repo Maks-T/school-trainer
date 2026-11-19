@@ -39,6 +39,7 @@
     },
     {
       "id": "history",
+      "tools": [{"id": "teacher", "icon": "🧑‍🏫", "title": "Учитель", "type": "teacher"}],
       "title": "История",
       "icon": "📜",
       "color": "#4f46e5",
@@ -141,6 +142,7 @@
     },
     {
       "id": "history_bel",
+      "tools": [{"id": "teacher", "icon": "🧑‍🏫", "title": "Учитель", "type": "teacher"}],
       "labels": {"timeline": "⏳ Хронология"},
       "title": "История Беларуси",
       "icon": "🏛️",

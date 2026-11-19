@@ -90,6 +90,33 @@ for (const subj of registry.subjects) {
         }
     }
 
+    // датасеты учителя: data/<id>/p<N>.teacher.json
+    if (existsSync(dir)) {
+        for (const f of readdirSync(dir)) {
+            const m = /^p(\d+)\.teacher\.json$/.exec(f);
+            if (!m) continue;
+            const rel = `data/${subj.id}/${f}`;
+            if (!seen.has(m[1])) warn(rel, 'датасет учителя есть, а урока в subjects.json нет');
+            if (!(subj.tools || []).some(t => t.type === 'teacher')) warn(rel, 'у предмета нет помощника type "teacher" — кнопки «Учитель» не будет');
+            const d = readJson(join(dir, f));
+            if (!d) continue;
+            if (String(d.id) !== m[1]) err(rel, `id "${d.id}" не совпадает с именем файла`);
+            if (!Array.isArray(d.sections) || !d.sections.length) { err(rel, 'нет sections'); continue; }
+            const ids = new Set();
+            d.sections.forEach((s, i) => {
+                if (!s.id || !s.title || !s.text) err(rel, `sections[${i}]: нужны id, title и text`);
+                if (s.id === 'all') err(rel, `sections[${i}]: id "all" зарезервирован`);
+                if (!Array.isArray(s.points) || s.points.length < 2) err(rel, `sections[${i}]: в чек-листе меньше 2 пунктов`);
+                (s.points || []).forEach((p, j) => {
+                    if (!p.id || !p.text || !p.q) err(rel, `sections[${i}].points[${j}]: нужны id, text и q`);
+                    if (ids.has(p.id)) err(rel, `пункт ${p.id} повторяется`);
+                    ids.add(p.id);
+                    if (p.w !== undefined && ![1, 2, 3].includes(p.w)) err(rel, `пункт ${p.id}: w должен быть 1, 2 или 3`);
+                });
+            });
+        }
+    }
+
     if (existsSync(dir)) {
         for (const f of readdirSync(dir)) {
             const m = /^p(\d+)\.json$/.exec(f);

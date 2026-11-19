@@ -3,6 +3,7 @@
 //   { "id": "periodic", "icon": "🧪", "title": "Таблица Менделеева", "type": "periodic", "data": "tools/periodic.json" }
 // Помощники получают контекст открытого параграфа — см. getToolContext() и поле toolContext в JSON параграфа.
 // Типы: "periodic" — таблица Менделеева (как в учебнике, с валентностью), "mr-calc" — калькулятор Mr, "valence-calc" — калькулятор валентности,
+//       "teacher" — учитель: проверка пересказа с ИИ (teacher.js, датасет p<N>.teacher.json),
 //       "tables" — набор таблиц (data: {tables:[{title, columns, rows}]}), "image" — картинка (src), "html" — готовый HTML (html).
 
 const toolCache = {};
@@ -16,6 +17,7 @@ function initTools() {
         `<button class="tool-btn" id="tool-btn-${i}" onclick="openTool(${i})">${t.icon || '🔧'} ${t.title}</button>`).join('');
     bar.style.display = 'flex';
     initToolDock();
+    tools.forEach((t, i) => { if (t.type === 'teacher' && typeof tchProbe === 'function') tchProbe(i); });
 }
 
 function toolEsc(t) {
@@ -35,6 +37,7 @@ async function loadToolData(tool) {
 
 async function openTool(i) {
     const tool = subject.tools[i];
+    window._activeToolType = tool.type;
     const modal = document.getElementById('tool-modal');
     document.getElementById('tool-title').textContent = `${tool.icon || ''} ${tool.title}`;
     const body = document.getElementById('tool-body');
@@ -49,6 +52,7 @@ async function openTool(i) {
         else if (tool.type === 'mr-calc') renderMrCalc(body, tdata.elements, ctx);
         else if (tool.type === 'valence-calc') renderValenceCalc(body, tdata.elements, ctx);
         else if (tool.type === 'tables') renderTables(body, tdata.tables);
+        else if (tool.type === 'teacher') await renderTeacher(body);
         else if (tool.type === 'image') body.innerHTML = `<img class="tool-img" src="data/${subject.id}/${toolEsc(tool.src)}" alt="${toolEsc(tool.title)}">`;
         else if (tool.type === 'html') body.innerHTML = tool.html || '';
         else body.innerHTML = '<p class="tool-note">Неизвестный тип инструмента</p>';
@@ -279,6 +283,8 @@ function dockResizeStart(e) {
 }
 
 function closeTool() {
+    window._activeToolType = null;
+    if (typeof tchMicStop === 'function') tchMicStop();
     document.getElementById('tool-modal').classList.remove('open');
     document.body.classList.remove('dock-right', 'dock-bottom');
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
