@@ -1,13 +1,15 @@
 // ============================================================
 // 🧑‍🏫 Учитель — проверка пересказа параграфа с помощью ИИ
 // Помощник типа "teacher" (subjects.json → tools). Датасет урока: data/<предмет>/p<N>.teacher.json
-// Подключение — любой OpenAI-совместимый API (OpenRouter, Groq, xAI, DeepSeek…), ключ хранится в браузере.
+// Подключение — любой OpenAI-совместимый API (OpenRouter, OrcaRouter, Groq, xAI, DeepSeek…), ключ хранится в браузере.
 // Без подключения работает самопроверка: ребёнок пересказывает, потом отмечает пункты чек-листа сам.
 // Если провайдер не принимает запросы из браузера (CORS) — запустите scripts/ai-proxy.mjs и включите «через прокси».
 // ============================================================
 
 const TCH_PRESETS = [
     { name: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1' },
+    // OrcaRouter: модели вида <провайдер>/<модель> (openai/, anthropic/, google/, deepseek/, qwen/…), orcarouter/auto — автовыбор
+    { name: 'OrcaRouter', baseUrl: 'https://api.orcarouter.ai/v1', model: 'orcarouter/auto' },
     { name: 'Groq', baseUrl: 'https://api.groq.com/openai/v1' },
     { name: 'xAI (Grok)', baseUrl: 'https://api.x.ai/v1' },
     { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/v1' },
@@ -27,7 +29,8 @@ const tch = {
     dsKey: '',        // subject:p — чтобы не потерять разговор при переключении помощников
     s: null,          // текущая сессия проверки
     view: 'start',    // start | session | settings
-    rec: null         // распознавание речи
+    rec: null,        // распознавание речи
+    models: {}        // загруженные списки моделей по подключениям
 };
 
 // ---------- Настройки ----------
@@ -558,6 +561,10 @@ function tchRenderSettings(body) {
                 <datalist id="tch-models-${c.id}"></datalist>
                 <button class="mode-btn" onclick="tchLoadModels('${c.id}')">📥 Модели</button>
             </div>
+            <div class="tch-conn-row" id="tch-filter-${c.id}" style="display:none">
+                <select class="tch-select" id="tch-prov-${c.id}" onchange="tchFilterModels('${c.id}')"></select>
+                <label class="tch-radio"><input type="checkbox" id="tch-free-${c.id}" onchange="tchFilterModels('${c.id}')"> только бесплатные</label>
+            </div>
             <div class="tch-conn-row">
                 <label class="tch-radio"><input type="checkbox" ${c.viaProxy ? 'checked' : ''} onchange="tchConnSet('${c.id}','viaProxy',this.checked)"> через локальный прокси</label>
                 <button class="mode-btn" onclick="tchTest('${c.id}')">🔌 Проверить</button>
@@ -593,7 +600,7 @@ function tchConnSet(id, k, v) {
 }
 function tchConnAdd() {
     const p = TCH_PRESETS[+document.getElementById('tch-preset').value];
-    const c = { id: 'c' + Date.now().toString(36), name: p.name, baseUrl: p.baseUrl, apiKey: '', model: '', viaProxy: false };
+    const c = { id: 'c' + Date.now().toString(36), name: p.name, baseUrl: p.baseUrl, apiKey: '', model: p.model || '', viaProxy: false };
     tch.settings.connections.push(c);
     if (!tch.settings.activeId) tch.settings.activeId = c.id;
     tchSaveSettings();
@@ -621,11 +628,27 @@ async function tchLoadModels(id) {
             id: m.id,
             free: /:free$/.test(m.id) || (m.pricing && Number(m.pricing.prompt) === 0 && Number(m.pricing.completion) === 0)
         })).sort((a, b) => (b.free - a.free) || a.id.localeCompare(b.id));
-        document.getElementById(`tch-models-${id}`).innerHTML = list.map(m => `<option value="${toolEsc(m.id)}">${m.free ? '⭐ бесплатная' : ''}</option>`).join('');
-        msg.textContent = `Моделей: ${list.length}, бесплатных: ${list.filter(m => m.free).length}. Начни вводить название в поле «Модель».`;
+        tch.models[id] = list;
+        // провайдеры — префикс до «/» в id модели (openai/…, deepseek/…); у прямых провайдеров префикса нет
+        const prov = {};
+        list.forEach(m => { const k = m.id.includes('/') ? m.id.split('/')[0] : '—'; prov[k] = (prov[k] || 0) + 1; });
+        const keys = Object.keys(prov).sort();
+        document.getElementById(`tch-prov-${id}`).innerHTML = `<option value="">Все провайдеры (${list.length})</option>` +
+            keys.map(k => `<option value="${toolEsc(k)}">${toolEsc(k === '—' ? 'без префикса' : k)} (${prov[k]})</option>`).join('');
+        document.getElementById(`tch-filter-${id}`).style.display = keys.length > 1 ? '' : 'none';
+        tchFilterModels(id);
+        msg.textContent = `Моделей: ${list.length}, бесплатных: ${list.filter(m => m.free).length}. Выбери провайдера и начни вводить название в поле «Модель».`;
     } catch (e) {
         msg.textContent = 'Не удалось загрузить список: ' + (e instanceof TypeError ? 'нет связи (возможно, нужен прокси)' : e.message);
     }
+}
+
+function tchFilterModels(id) {
+    const list = tch.models[id] || [];
+    const prov = document.getElementById(`tch-prov-${id}`).value;
+    const free = document.getElementById(`tch-free-${id}`).checked;
+    const shown = list.filter(m => (!prov || (prov === '—' ? !m.id.includes('/') : m.id.startsWith(prov + '/'))) && (!free || m.free));
+    document.getElementById(`tch-models-${id}`).innerHTML = shown.map(m => `<option value="${toolEsc(m.id)}">${m.free ? '⭐ бесплатная' : ''}</option>`).join('');
 }
 
 async function tchTest(id) {
