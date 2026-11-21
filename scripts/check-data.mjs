@@ -54,7 +54,10 @@ for (const subj of registry.subjects) {
 
         if (String(d.id) !== String(t.p)) err(rel, `id "${d.id}" не совпадает с p=${t.p}`);
         if (!d.title) err(rel, 'нет title');
-        if (!Array.isArray(d.sections) || !d.sections.length) err(rel, 'нет sections');
+        if (t.mode === 'assessment') {
+            if (!Array.isArray(d.quiz) || !d.quiz.length) err(rel, 'нет вопросов контрольной');
+            if (!existsSync(join(dir, `p${t.p}.teacher.json`))) err(rel, 'нет датасета учителя');
+        } else if (!Array.isArray(d.sections) || !d.sections.length) err(rel, 'нет sections');
 
         const images = [];
         (d.sections || []).forEach((s, i) => {
@@ -93,7 +96,7 @@ for (const subj of registry.subjects) {
     // датасеты учителя: data/<id>/p<N>.teacher.json
     if (existsSync(dir)) {
         for (const f of readdirSync(dir)) {
-            const m = /^p(\d+)\.teacher\.json$/.exec(f);
+            const m = /^p(\d+(?:-\d+)?)\.teacher\.json$/.exec(f);
             if (!m) continue;
             const rel = `data/${subj.id}/${f}`;
             if (!seen.has(m[1])) warn(rel, 'датасет учителя есть, а урока в subjects.json нет');
@@ -119,7 +122,7 @@ for (const subj of registry.subjects) {
 
     if (existsSync(dir)) {
         for (const f of readdirSync(dir)) {
-            const m = /^p(\d+)\.json$/.exec(f);
+            const m = /^p(\d+(?:-\d+)?)\.json$/.exec(f);
             if (m && !seen.has(m[1])) warn(`data/${subj.id}/${f}`, 'файл есть, но темы нет в subjects.json');
         }
     }

@@ -16,6 +16,7 @@ let topicIndex = -1;  // индекс текущей темы
 let data = null;      // данные текущего параграфа
 let currentCard = 0;
 let currentQ = 0;
+let quizQuestions = [];
 let score = 0;
 let activeSection = 'all'; // 'all' или индекс 0, 1, 2...
 
@@ -41,7 +42,7 @@ let activeSection = 'all'; // 'all' или индекс 0, 1, 2...
     // Плоский список тем всех разделов предмета
     topicList = (subject.sections || []).flatMap(sec => sec.topics);
     topicIndex = topicList.findIndex(t => String(t.p) === String(paragraphId));
-    if (topicIndex === -1) topicIndex = 0;
+    if (topicIndex === -1) topicIndex = Math.max(0, topicList.findIndex(t => t.mode !== 'assessment'));
 
     const topic = topicList[topicIndex];
     renderChrome(topic);
@@ -109,8 +110,9 @@ function switchSubject(id) {
     if (!s) return;
     if (s.id === subjectId) return;
     const topics = (s.sections || []).flatMap(sec => sec.topics);
-    if (s.status === 'ready' && topics.length > 0) {
-        window.location.href = `trainer.html?s=${id}&p=${topics[0].p}`;
+    const firstTopic = topics.find(t => t.mode !== 'assessment') || topics[0];
+    if (s.status === 'ready' && firstTopic) {
+        window.location.href = `trainer.html?s=${id}&p=${firstTopic.p}`;
     } else {
         window.location.href = `subject.html?s=${id}`;
     }
@@ -137,7 +139,7 @@ function initApp() {
     if (availability.speaker) renderSpeaker();
     if (availability.flashcards) updateCardUI();
     if (availability.timeline) renderTimeline();
-    if (availability.quiz) renderQuestion();
+    if (availability.quiz) restartQuiz();
 }
 
 function applyTabAvailability(availability) {
@@ -347,10 +349,19 @@ function revealItem(el) {
 }
 
 // 4. ТЕСТ
+function shuffled(items) {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
 function renderQuestion() {
-    if (!data.quiz || data.quiz.length === 0) return;
-    const q = data.quiz[currentQ];
-    document.getElementById('q-text').innerText = `${currentQ + 1}. ${q.q}`;
+    if (!quizQuestions.length) return;
+    const q = quizQuestions[currentQ];
+    document.getElementById('q-text').innerText = `${currentQ + 1}${q.paragraph ? ' / ' + quizQuestions.length + ' · § ' + q.paragraph : ''}. ${q.q}`;
     const optsContainer = document.getElementById('q-options');
     optsContainer.innerHTML = '';
     document.getElementById('q-feedback').innerText = '';
@@ -366,9 +377,10 @@ function renderQuestion() {
 }
 
 function checkAnswer(chosenIdx) {
-    const q = data.quiz[currentQ];
+    const q = quizQuestions[currentQ];
     const buttons = document.querySelectorAll('.quiz-opt');
-    buttons.forEach(b => b.style.pointerEvents = 'none');
+    if (buttons[chosenIdx].disabled) return;
+    buttons.forEach(b => { b.disabled = true; });
 
     if (chosenIdx === q.correct) {
         buttons[chosenIdx].classList.add('correct');
@@ -384,16 +396,23 @@ function checkAnswer(chosenIdx) {
 
 function nextQuestion() {
     currentQ++;
-    if (currentQ < data.quiz.length) {
+    if (currentQ < quizQuestions.length) {
         renderQuestion();
     } else {
         document.getElementById('quiz-box').style.display = 'none';
         document.getElementById('quiz-result').style.display = 'block';
-        document.getElementById('quiz-score').innerText = `Ваш результат: ${score} из ${data.quiz.length}`;
+        document.getElementById('quiz-score').innerText = `Ваш результат: ${score} из ${quizQuestions.length}`;
     }
 }
 
 function restartQuiz() {
+    quizQuestions = data.quiz;
+    if (topicList[topicIndex].mode === 'assessment') {
+        quizQuestions = shuffled(data.quiz).map(q => {
+            const order = shuffled(q.opts.map((_, i) => i));
+            return { ...q, opts: order.map(i => q.opts[i]), correct: order.indexOf(q.correct) };
+        });
+    }
     currentQ = 0;
     score = 0;
     document.getElementById('quiz-box').style.display = 'block';
