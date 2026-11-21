@@ -207,18 +207,20 @@ function tchSetActive(id) { tch.settings.activeId = id || null; tchSaveSettings(
 function tchRenderStart(body) {
     const t = tchTopic();
     const ds = tch.ds;
+    const short = ds.mode === 'short-answer';
     const item = (id, title, n) => {
         const r = tchGetResult(id);
         const badge = r ? `<span class="tch-badge">${r.grade != null ? r.grade : '✓'}</span>` : '';
-        return `<button class="tch-sec" onclick="tchStart('${id}')"><span>${toolEsc(title)}</span><span class="tch-sec-meta">${n} ${tchPlural(n, 'пункт', 'пункта', 'пунктов')} ${badge}</span></button>`;
+        return `<button class="tch-sec" onclick="tchStart('${id}')"><span>${toolEsc(title)}</span><span class="tch-sec-meta">${n} ${short ? tchPlural(n, 'вопрос', 'вопроса', 'вопросов') : tchPlural(n, 'пункт', 'пункта', 'пунктов')} ${badge}</span></button>`;
     };
     body.innerHTML = `${tchConnBar()}
-        <p class="tch-lead">Выбери пункт параграфа и перескажи его своими словами — текстом или голосом 🎤. Подглядывать нельзя 😉</p>
+        <p class="tch-lead">${short ? 'Выбери параграф или смешанный раунд. Отвечай одним словом или короткой фразой, текстом или голосом.' : 'Выбери пункт параграфа и перескажи его своими словами — текстом или голосом 🎤. Подглядывать нельзя 😉'}</p>
         <div class="tch-secs">
+            ${short ? item('all', 'Смешанный раунд · по одному вопросу из каждого параграфа', ds.sections.length) : ''}
             ${ds.sections.map(s => item(s.id, s.title, s.points.length)).join('')}
-            ${item('all', `Весь ${t ? t.num : 'параграф'} целиком`, ds.sections.reduce((n, s) => n + s.points.length, 0))}
+            ${short ? '' : item('all', `Весь ${t ? t.num : 'параграф'} целиком`, ds.sections.reduce((n, s) => n + s.points.length, 0))}
         </div>
-        ${tchActiveConn() ? '' : '<p class="tool-note">Модель не подключена: после пересказа покажу чек-лист, отметишь пункты сам (или вместе с родителем). Подключить ИИ — ⚙️.</p>'}`;
+        ${tchActiveConn() ? '' : `<p class="tool-note">Модель не подключена: ${short ? 'сравнивай свои ответы с эталоном.' : 'после пересказа покажу чек-лист, отметишь пункты сам (или вместе с родителем).'} Подключить ИИ — ⚙️.</p>`}`;
 }
 
 // ---------- Сессия проверки ----------
@@ -227,6 +229,12 @@ function tchStart(secId) {
     const sec = tchSection(secId);
     tch.s = { secId, sec, phase: 'retell', msgs: [], status: {}, comments: {}, qStatus: {}, queue: [], qi: 0, grade0: null };
     tch.view = 'session';
+    if (tch.ds.mode === 'short-answer') {
+        tch.s.short = true;
+        tch.s.queue = shuffled(secId === 'all' ? tch.ds.sections.map(s => shuffled(s.points)[0]) : sec.points);
+        if (secId === 'all') tch.s.sec = { ...sec, title: 'Смешанный раунд' };
+        return tchStartQuestions();
+    }
     tchSay('teacher', `Расскажи своими словами: «${sec.title}». ${tch.ds.hint || 'Постарайся вспомнить как можно больше: главные мысли, понятия, факты, примеры и выводы.'}`);
     tchRender();
 }
@@ -259,10 +267,10 @@ function tchRenderSession(body) {
     } else if (s.phase === 'done') {
         actions = `<div class="tch-actions">
             <button class="mode-btn active" onclick="tchStart('${s.secId}')">🔁 Ещё раз</button>
-            <button class="mode-btn" onclick="tchBack()">Другой пункт</button></div>`;
+            <button class="mode-btn" onclick="tchBack()">${s.short ? 'Выбрать тему' : 'Другой пункт'}</button></div>`;
     }
     body.innerHTML = `${tchConnBar()}
-        <div class="tch-head"><button class="mode-btn" onclick="tchBack()">← Пункты</button><b>${toolEsc(s.sec.title)}</b></div>
+        <div class="tch-head"><button class="mode-btn" onclick="tchBack()">${s.short ? '← Темы' : '← Пункты'}</button><b>${toolEsc(s.sec.title)}</b></div>
         <div class="tch-chat" id="tch-chat">${msgs}${s.busy ? '<div class="tch-msg tch-teacher"><span class="tch-ava">🧑‍🏫</span><div class="tch-bubble tch-typing">Учитель думает…</div></div>' : ''}</div>
         ${actions}
         ${canType ? `<div class="tch-input">
@@ -273,6 +281,7 @@ function tchRenderSession(body) {
                 ${s.phase === 'question' ? `<button class="mode-btn" onclick="tchDontKnow()" ${s.busy ? 'disabled' : ''}>Не знаю</button>` : ''}
                 <button class="mode-btn active" onclick="tchSend()" ${s.busy ? 'disabled' : ''}>Отправить</button>
             </div></div>` : ''}`;
+    if (s.phase === 'selfq') tchRenderSelfQ();
     const chat = document.getElementById('tch-chat');
     if (chat) chat.scrollTop = chat.scrollHeight;
     const ta = document.getElementById('tch-text');
@@ -418,7 +427,7 @@ function tchAsk() {
     const s = tch.s;
     const p = s.queue[s.qi];
     const prefix = s.status[p.id] === 'wrong' && s.comments[p.id] ? `${s.comments[p.id]}\n` : '';
-    tchSay('teacher', `Вопрос ${s.qi + 1} из ${s.queue.length}. ${prefix}${p.q}`);
+    tchSay('teacher', `Вопрос ${s.qi + 1} из ${s.queue.length}. ${p.paragraph ? '§ ' + p.paragraph + '. ' : ''}${prefix}${p.q}`);
     tchRender();
 }
 
@@ -430,21 +439,29 @@ async function tchCheckAnswer(text) {
         s.pending = p;
         tchSay('teacher', `Правильный ответ по учебнику: ${p.text}.\nСравни со своим ответом и отметь честно 👇`, {});
         s.phase = 'selfq';
-        tchRenderSelfQ();
+        tchRender();
         return;
     }
     s.busy = true; tchRender();
     try {
         const raw = await tchChat([
             { role: 'system', content: tchSys(TCH_SYS_ANSWER) },
-            { role: 'user', content: `ТЕКСТ УЧЕБНИКА:\n${s.sec.text}\n\nВОПРОС: ${p.q}\nЭТАЛОН (пункт чек-листа): ${p.text}\nОТВЕТ УЧЕНИКА: ${text}` }
+            { role: 'user', content: `${s.short ? '' : 'ТЕКСТ УЧЕБНИКА:\n' + s.sec.text + '\n\n'}ВОПРОС: ${p.q}\nЭТАЛОН: ${p.text}\nОТВЕТ УЧЕНИКА: ${text}` }
         ]);
+        if (tch.s !== s) return;
         const r = tchParseJson(raw);
         s.qStatus[p.id] = ['ok', 'partial', 'wrong'].includes(r.status) ? r.status : 'wrong';
         s.busy = false;
         tchSay('teacher', `${TCH_STATUS[s.qStatus[p.id]].icon} ${r.comment || ''}`.trim());
     } catch (err) {
+        if (tch.s !== s) return;
         s.busy = false;
+        if (s.short) {
+            s.pending = p;
+            s.phase = 'selfq';
+            tchSay('teacher', `Проверка моделью недоступна. Сравни свой ответ с эталоном: ${p.text}`);
+            return tchRender();
+        }
         s.qStatus[p.id] = 'partial';
         tchSay('teacher', `Не получилось проверить ответ (${err.message}). Правильный ответ: ${p.text}.`);
     }
@@ -452,7 +469,6 @@ async function tchCheckAnswer(text) {
 }
 
 function tchRenderSelfQ() {
-    tchRender();
     const chat = document.getElementById('tch-chat');
     if (!chat) return;
     chat.insertAdjacentHTML('beforeend', `<div class="tch-actions">
@@ -490,6 +506,13 @@ function tchFinish() {
     const s = tch.s;
     tchMicStop();
     s.phase = 'done';
+    if (s.short) {
+        const correct = s.queue.filter(p => s.qStatus[p.id] === 'ok').length;
+        const partial = s.queue.filter(p => s.qStatus[p.id] === 'partial').length;
+        const repeat = [...new Set(s.queue.filter(p => s.qStatus[p.id] !== 'ok').map(p => p.paragraph))].sort((a, b) => a - b);
+        tchSay('teacher', `Верно: ${correct} из ${s.queue.length}. Частично: ${partial}.${repeat.length ? '\nСтоит повторить § ' + repeat.join(', ') + '.' : ''}`);
+        return tchRender();
+    }
     const final = tchGrade(tchScore(true));
     const repeat = s.sec.points.filter(p => s.status[p.id] !== 'ok' && s.qStatus[p.id] !== 'ok');
     let msg = repeat.length ? `Хорошая работа! Повтори ещё раз: ${repeat.length} ${tchPlural(repeat.length, 'пункт', 'пункта', 'пунктов')} из чек-листа.` : 'Отлично! Ты знаешь весь пункт 👏';
