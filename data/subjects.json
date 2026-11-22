@@ -5,7 +5,7 @@
   "subjects": [
     {
       "id": "physics",
-      "tools": [{"id": "si", "icon": "📏", "title": "Единицы и приставки СИ", "type": "tables", "data": "tools/si.json"}],
+      "tools": [{"id": "si", "icon": "📏", "title": "Единицы и приставки СИ", "type": "tables", "data": "tools/si.json"}, {"id": "teacher", "icon": "🧑‍🏫", "title": "Учитель", "type": "teacher"}],
       "labels": {"timeline": "🔬 Опыты и примеры", "tlHideLeft": "📅 Скрыть опыты", "tlHideRight": "🔍 Скрыть описания"},
       "title": "Физика",
       "icon": "🔬",
